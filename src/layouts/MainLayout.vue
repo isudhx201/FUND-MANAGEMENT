@@ -1,20 +1,84 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header elevated class="bg-black text-white">
       <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+        <q-btn flat no-caps no-wrap dense to="/" class="q-mr-sm">
+          <q-toolbar-title class="text-weight-bold">BatchFund</q-toolbar-title>
+        </q-btn> 
 
-        <q-toolbar-title> Quasar App </q-toolbar-title>
+        <q-space />
 
-        <div>Quasar v{{ $q.version }}</div>
+        <!-- Desktop Menu -->
+        <div class="q-gutter-sm row items-center gt-xs">
+          <q-btn flat round dense icon="home" to="/" class="q-mr-xs" />
+          <q-btn flat no-caps label="Payment Details" to="/payment-details" />
+          <q-btn flat no-caps label="History" to="/history" />
+          <q-separator vertical dark spaced />
+          <q-btn outline no-caps label="Admin Login" to="/login" />
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" class="lt-sm" />
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <q-item-label header> Essential Links </q-item-label>
+    <!-- Mobile Drawer -->
+    <q-drawer
+      v-model="leftDrawerOpen"
+      bordered
+      overlay
+      behavior="mobile"
+      class="bg-grey-1"
+    >
+      <q-list padding class="text-grey-9">
+        <q-item-label header class="text-weight-bold text-black">Menu</q-item-label>
 
-        <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
+        <q-item clickable v-ripple to="/">
+          <q-item-section avatar>
+            <q-icon name="home" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Home</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item clickable v-ripple to="/payment-details">
+          <q-item-section avatar>
+            <q-icon name="payments" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Payment Details</q-item-label>
+          </q-item-section>
+        </q-item>
+        
+        <q-item clickable v-ripple to="/history">
+          <q-item-section avatar>
+            <q-icon name="history" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Fund History</q-item-label>
+          </q-item-section>
+        </q-item>
+        
+        <q-item clickable v-ripple to="/documents">
+          <q-item-section avatar>
+            <q-icon name="folder" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Documents</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-separator class="q-my-md" />
+
+        <q-item clickable v-ripple to="/login">
+          <q-item-section avatar>
+            <q-icon name="admin_panel_settings" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Admin Login</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -26,56 +90,10 @@
 
 <script setup>
 import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
-
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev',
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
-  },
-]
 
 const leftDrawerOpen = ref(false)
 
-function toggleLeftDrawer() {
+function toggleLeftDrawer () {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
 </script>
