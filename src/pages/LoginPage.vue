@@ -11,7 +11,7 @@
            </div>
         </div>
         <div class="text-h5 text-weight-bold text-gray-900">Admin Portal</div>
-        <div class="text-caption text-grey-6 q-mt-xs">Batch Fund Management 2026 Admin Access</div>
+        <div class="text-caption text-grey-6 q-mt-xs">2023 BS Batch Fund Admin Access</div>
       </q-card-section>
 
       <q-card-section class="q-mt-sm">

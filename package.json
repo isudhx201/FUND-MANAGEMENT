@@ -1,8 +1,8 @@
 {
   "name": "fund-manager",
   "version": "0.0.1",
-  "description": "2023 batch fund manager web app",
-  "productName": "batch fund manager",
+  "description": "2023 BS Batch Fund Manager Web App",
+  "productName": "2023 BS Batch Fund Manager",
   "author": "",
   "type": "module",
   "private": true,

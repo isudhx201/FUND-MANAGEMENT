@@ -241,13 +241,13 @@
     <!-- Footer -->
     <div class="bg-dark text-white q-py-xl">
       <div class="container q-mx-auto q-px-md text-center">
-        <div class="text-h5 text-weight-bold q-mb-md font-inter">Batch Fund 2026</div>
+        <div class="text-h5 text-weight-bold q-mb-md font-inter">2023 BS Batch Fund</div>
         <div class="text-grey-5 q-mb-lg text-body2" style="max-width: 500px; margin: 0 auto;">
           Empowering our batch with transparent financial management. Every rupee accounted for.
         </div>
         <q-separator dark class="q-my-lg opacity-20" />
         <div class="text-caption text-grey-6">
-          &copy; 2026 Batch Fund Management System. All rights reserved.
+          &copy; 2026 2023 BS Batch Fund Management System. All rights reserved.
         </div>
       </div>
     </div>
