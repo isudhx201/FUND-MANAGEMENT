@@ -1,13 +1,14 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { supabase } from 'src/supabase'
 
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT_eEKqV-Aolo5VsDjcFXhrXxZcFIgNVGE2dy0r1ESZ4TFEzwZWA8DmFWrY04kY6VRFaUtEcDF_RWHW/pub?output=csv'
 const MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
 
 export const useTransactionStore = defineStore('transactions', {
   state: () => ({
-    transactions: JSON.parse(localStorage.getItem('batch_fund_transactions')) || [], // Load from local storage
-    notice: localStorage.getItem('batch_fund_notice') || '',
+    transactions: [],
+    notice: '',
     students: [], // Sheet data
     loading: false
   }),
@@ -44,12 +45,12 @@ export const useTransactionStore = defineStore('transactions', {
     specialIncome(state) {
       return state.transactions
         .filter(t => t.type === 'Credit')
-        .reduce((sum, t) => sum + parseFloat(t.amount), 0)
+        .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0)
     },
     specialExpenses(state) {
       return state.transactions
         .filter(t => t.type === 'Debit')
-        .reduce((sum, t) => sum + parseFloat(t.amount), 0)
+        .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0)
     },
     totalFunds() {
       // Access other getters via 'this'
@@ -60,7 +61,6 @@ export const useTransactionStore = defineStore('transactions', {
     },
     sortedTransactions(state) {
        // Just the special transactions, sorted (for Admin Dashboard)
-       // Manual transactions always use numeric timestamp IDs
        return [...state.transactions].sort((a, b) => {
          const dateDiff = b.date.localeCompare(a.date)
          if (dateDiff !== 0) return dateDiff
@@ -75,28 +75,35 @@ export const useTransactionStore = defineStore('transactions', {
            const dateDiff = b.date.localeCompare(a.date)
            if (dateDiff !== 0) return dateDiff
            
-           // 2. If same date, sort by ID DESC (Newest created first)
-           // Manual transactions have numeric IDs (timestamp). Aggregates have string IDs.
+           // 2. If same date, sort by ID DESC
            const idA = a.id
            const idB = b.id
+           
+           // We try to keep numeric IDs (Manual) on top of string IDs (Aggregate)
+           // If types differ
            const typeA = typeof idA
            const typeB = typeof idB
            
-           // If types differ (one manual, one aggregate), prioritize Manual (Number)
-           if (typeA === 'number' && typeB !== 'number') return -1 // A is number -> A comes first (Top)
-           if (typeB === 'number' && typeA !== 'number') return 1  // B is number -> B comes first
+           if (typeA === 'number' && typeB !== 'number') return -1 
+           if (typeB === 'number' && typeA !== 'number') return 1 
 
-           // If both numbers (Manual txs on same day), larger timestamp first
            if (typeA === 'number' && typeB === 'number') return idB - idA
-
-           // If both strings (Aggregates on same day?? Unlikely but safe fallback), alpha sort
            return String(idB).localeCompare(String(idA))
         })
     }
   },
   actions: {
-    async fetchSheetData() {
+    async fetchAllData() {
       this.loading = true
+      await Promise.all([
+        this.fetchSheetData(),
+        this.fetchTransactions(),
+        this.fetchNotice()
+      ])
+      this.loading = false
+    },
+    
+    async fetchSheetData() {
       try {
         const response = await axios.get(SHEET_URL + '&t=' + Date.now())
         const lines = response.data.split('\n')
@@ -109,53 +116,155 @@ export const useTransactionStore = defineStore('transactions', {
     
           const row = { id: i }
           headers.forEach((h, index) => {
-            let field = h.toLowerCase().replace(/[\s.]/g, '_')
-            if (h === 'Registration No.') field = 'regNo'
-            if (h === 'Name') field = 'name'
-            row[field] = currentLine[index]?.trim() || ''
+            const cleanHeader = h.trim()
+            let field = cleanHeader.toLowerCase().replace(/[\s.]/g, '_')
+            if (cleanHeader === 'Registration No.') field = 'regNo'
+            if (cleanHeader === 'Name') field = 'name'
+            
+            let value = currentLine[index] ? currentLine[index].trim() : ''
+            
+            if (MONTHS.includes(field)) {
+              const numVal = parseFloat(value)
+              row[field] = isNaN(numVal) ? 0 : numVal
+            } else {
+              row[field] = value
+            }
           })
           rows.push(row)
         }
         this.students = rows
       } catch (error) {
         console.error('Error fetching sheet:', error)
-      } finally {
-        this.loading = false
       }
     },
-    addTransaction(transaction) {
-      // Ensure generated ID overwrites any null ID passed in the payload
-      this.transactions.push({
-        ...transaction,
-        id: Date.now()
-      })
-      this.saveToStorage()
-    },
-    updateTransaction(updatedTx) {
-      const index = this.transactions.findIndex(t => t.id === updatedTx.id)
-      if (index !== -1) {
-        this.transactions[index] = updatedTx
-        this.saveToStorage()
+
+    async fetchTransactions() {
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .order('date', { ascending: false })
+      
+      if (error) {
+        console.error('Error fetching transactions:', error)
+      } else {
+        this.transactions = data
       }
     },
-    deleteTransaction(id) {
-       this.transactions = this.transactions.filter(t => t.id !== id)
-       this.saveToStorage()
-    },
-    linkDocument(txId, docName, docData) {
-      const tx = this.transactions.find(t => t.id === txId)
-      if (tx) {
-        tx.proofName = docName
-        tx.proofData = docData
-        this.saveToStorage()
+
+    async fetchNotice() {
+      const { data, error } = await supabase
+        .from('system_settings')
+        .select('value')
+        .eq('key', 'notice')
+        .single()
+      
+      if (error && error.code !== 'PGRST116') { // PGRST116 is 'Row not found' which is fine
+        console.error('Error fetching notice:', error)
+      } else if (data) {
+        this.notice = data.value
       }
     },
-    saveToStorage() {
-      localStorage.setItem('batch_fund_transactions', JSON.stringify(this.transactions))
+
+    async addTransaction(transaction) {
+      const payload = {
+        id: Date.now(), // Still using client-side ID for simplicity, or we can omit it and let DB gen (requires changing logic to reload)
+        ...transaction
+      }
+      
+      // We'll let Supabase generate proper types if needed, but we used BigInt for ID in schema so Date.now() is fine.
+      const { error } = await supabase
+        .from('transactions')
+        .insert([
+          {
+            id: payload.id,
+            date: payload.date,
+            description: payload.description,
+            type: payload.type,
+            amount: payload.amount,
+            proof_name: payload.proofName,
+            proof_data: payload.proofData
+          }
+        ])
+
+      if (error) {
+        console.error('Error adding transaction:', error)
+        alert('Failed to save transaction')
+      } else {
+        this.transactions.push(payload)
+      }
     },
-    updateNotice(text) {
+
+    async updateTransaction(updatedTx) {
+      const { error } = await supabase
+        .from('transactions')
+        .update({
+             date: updatedTx.date,
+             description: updatedTx.description,
+             type: updatedTx.type,
+             amount: updatedTx.amount,
+             proof_name: updatedTx.proofName,
+             proof_data: updatedTx.proofData
+        })
+        .eq('id', updatedTx.id)
+
+      if (error) {
+        console.error('Error updating transaction:', error)
+        alert('Failed to update transaction')
+      } else {
+        const index = this.transactions.findIndex(t => t.id === updatedTx.id)
+        if (index !== -1) {
+          this.transactions[index] = updatedTx
+        }
+      }
+    },
+
+    async deleteTransaction(id) {
+       const { error } = await supabase
+        .from('transactions')
+        .delete()
+        .eq('id', id)
+      
+       if (error) {
+         console.error('Error deleting transaction:', error)
+         alert('Failed to delete transaction')
+       } else {
+         this.transactions = this.transactions.filter(t => t.id !== id)
+       }
+    },
+
+    async linkDocument(txId, docName, docData) {
+      // Find the tx first to make sure it exists in local state or refetch?
+      // Just update it
+      const { error } = await supabase
+        .from('transactions')
+        .update({
+          proof_name: docName,
+          proof_data: docData
+        })
+        .eq('id', txId)
+      
+      if (error) {
+         console.error('Link doc error', error)
+      } else {
+        const tx = this.transactions.find(t => t.id === txId)
+        if (tx) {
+          tx.proofName = docName
+          tx.proofData = docData
+        }
+      }
+    },
+
+    async updateNotice(text) {
       this.notice = text
-      localStorage.setItem('batch_fund_notice', text)
+      
+      const { error } = await supabase
+        .from('system_settings')
+        .upsert({ key: 'notice', value: text })
+      
+      if (error) {
+        console.error('Error updating notice:', error)
+        alert('Failed to save notice')
+      }
     }
   }
 })

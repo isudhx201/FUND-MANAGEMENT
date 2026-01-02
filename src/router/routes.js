@@ -8,7 +8,7 @@ const routes = [
       { path: 'submit-proof', component: () => import('pages/SubmitProofPage.vue') },
       { path: 'documents', component: () => import('pages/DocumentsPage.vue') },
       { path: 'login', component: () => import('pages/LoginPage.vue') },
-      { path: 'admin/dashboard', component: () => import('pages/AdminDashboardPage.vue') },
+      { path: 'admin/dashboard', component: () => import('pages/AdminDashboardPage.vue'), meta: { requiresAuth: true } },
       { path: 'payment-details', component: () => import('pages/PaymentDetailsPage.vue') },
       { path: 'history', component: () => import('pages/MainFundHistoryPage.vue') },
     ],

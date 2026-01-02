@@ -1,105 +1,94 @@
 <template>
-  <q-page class="q-pa-md bg-grey-1">
-    <div class="row q-col-gutter-lg">
-      <div class="col-12 row items-center justify-between">
-        <h1 class="text-h4 text-weight-bold q-my-sm">Admin Dashboard</h1>
-         <q-btn label="View Master History" icon="history" outline color="black" to="/history?mode=admin" no-caps />
+  <q-page class="q-pa-md bg-grey-1 font-inter">
+    <!-- Header -->
+    <div class="row items-center justify-between q-mb-lg">
+      <div>
+        <h1 class="text-h4 text-weight-bold q-my-none text-primary">Admin Dashboard</h1>
+        <div class="text-subtitle2 text-grey-7 q-mt-xs">Manage funds, notices, and verifying documents</div>
       </div>
+      <div class="q-gutter-sm">
+        <q-btn 
+          label="Master History" 
+          icon="history" 
+          unelevated 
+          class="bg-white text-primary border-primary"
+          to="/history?mode=admin" 
+          no-caps 
+        />
+        <q-btn 
+          label="Logout" 
+          icon="logout" 
+          color="red-1" 
+          text-color="negative"
+          unelevated
+          @click="logout" 
+          no-caps 
+        />
+      </div>
+    </div>
 
+    <div class="row q-col-gutter-lg">
       <!-- Notice Board Manager -->
-      <div class="col-12">
-        <q-card flat bordered class="bg-white">
-           <q-card-section class="row items-center justify-between">
-              <div class="text-h6 text-weight-bold">Notice Board Manager</div>
-              <q-btn label="Update Notice" color="black" icon="campaign" @click="saveNotice" />
+      <div class="col-12 col-md-6">
+        <q-card class="shadow-soft border-radius-lg bg-white h-full">
+           <q-card-section class="q-pa-md border-bottom row items-center justify-between bg-grey-1">
+              <div class="text-subtitle1 text-weight-bold">
+                 <q-icon name="campaign" class="q-mr-sm text-primary" /> Notice Board
+              </div>
+              <q-btn label="Update Notice" color="primary" unelevated size="sm" @click="saveNotice" />
            </q-card-section>
-           <q-card-section>
+           <q-card-section class="q-pa-md">
               <q-input 
-                filled 
+                outlined 
                 v-model="noticeText" 
-                label="Public Notice Message" 
+                label="Public Announcement" 
                 placeholder="Enter important announcements here..." 
-                hint="This message will appear at the top of the homepage."
+                hint="Visible on the homepage top banner."
                 autogrow
+                bg-color="white"
               />
            </q-card-section>
         </q-card>
       </div>
 
-      <!-- Document Upload Section -->
-      <div class="col-12 col-md-4">
-        <q-card flat bordered class="bg-white">
-          <q-card-section>
-            <div class="text-h6 text-weight-bold q-mb-md">Upload & Link Documents</div>
-            <q-file 
-              filled 
-              bottom-slots 
-              v-model="file" 
-              label="Select File" 
-              counter
-              color="black"
-            >
-              <template v-slot:prepend>
-                <q-icon name="cloud_upload" @click.stop.prevent />
-              </template>
-              <template v-slot:append>
-                <q-icon name="close" @click.stop.prevent="file = null" class="cursor-pointer" />
-              </template>
-            </q-file>
-            
-            <q-select 
-              filled 
-              v-model="linkedTx" 
-              :options="txOptions"
-              label="Link to Transaction (Optional)"
-              class="q-mt-md"
-              color="black"
-              menu-anchor="bottom left"
-              menu-self="top left"
-            />
-            
-            <q-btn 
-              label="Upload & Link" 
-              color="black" 
-              class="full-width q-mt-md" 
-              @click="uploadFile"
-              :disable="!file"
-            />
-          </q-card-section>
-          
-          <q-separator />
-          
-          <q-card-section>
-            <div class="text-subtitle2 q-mb-sm">Recent Uploads</div>
-            <q-list separator dense>
-              <q-item v-for="doc in uploadedDocs" :key="doc.id">
-                <q-item-section avatar>
-                  <q-icon name="description" color="grey-7" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>{{ doc.name }}</q-item-label>
-                  <q-item-label caption>{{ doc.type }} - {{ doc.date }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-card-section>
+      <!-- Quick Actions -->
+      <div class="col-12 col-md-6">
+        <q-card class="shadow-soft border-radius-lg bg-white h-full">
+           <q-card-section class="q-pa-md border-bottom bg-grey-1">
+              <div class="text-subtitle1 text-weight-bold">
+                 <q-icon name="bolt" class="q-mr-sm text-warning" /> Quick Actions
+              </div>
+           </q-card-section>
+           <q-card-section class="q-pa-md text-center row flex-center" style="min-height: 120px;">
+              <div class="q-gutter-md">
+                 <q-btn icon="add_circle" label="Add Income" color="green-6" unelevated Stack class="q-px-lg q-py-sm" @click="openTxDialog('Credit')" />
+                 <q-btn icon="remove_circle" label="Add Expense" color="red-5" unelevated Stack class="q-px-lg q-py-sm" @click="openTxDialog('Debit')" />
+              </div>
+           </q-card-section>
         </q-card>
       </div>
 
-      <!-- Student Details Excel Sheet -->
-      <div class="col-12 col-md-8">
-        <q-card flat bordered class="bg-white">
-          <q-card-section class="row items-center justify-between">
-            <div class="text-h6 text-weight-bold">Student Payment Records (Live Verification)</div>
+      <!-- Student Records -->
+      <div class="col-12">
+        <q-card class="shadow-soft border-radius-lg bg-white">
+          <q-card-section class="q-pa-md border-bottom row items-center justify-between bg-grey-1">
+            <div class="row items-center">
+               <q-icon name="table_chart" class="q-mr-sm text-grey-7" />
+               <div class="text-subtitle1 text-weight-bold">Student Payment Records</div>
+            </div>
             <div class="q-gutter-sm">
-               <q-btn icon="refresh" label="Refresh Data" dense flat no-caps color="primary" @click="fetchData" :loading="loading" />
                <q-btn 
-                 icon="open_in_new" 
-                 label="Edit Sheet" 
-                 dense 
-                 outline 
+                 dense flat icon="refresh" color="primary" 
+                 @click="fetchData" :loading="loading" 
+               >
+                 <q-tooltip>Refresh Data</q-tooltip>
+               </q-btn>
+               <q-btn 
+                 label="Go to Sheet" 
+                 icon-right="open_in_new" 
+                 dense flat 
                  no-caps 
-                 color="black" 
+                 text-color="grey-8" 
                  href="https://docs.google.com/spreadsheets/d/e/2PACX-1vT_eEKqV-Aolo5VsDjcFXhrXxZcFIgNVGE2dy0r1ESZ4TFEzwZWA8DmFWrY04kY6VRFaUtEcDF_RWHW/pubhtml"
                  target="_blank"
                />
@@ -112,14 +101,26 @@
               :columns="columns"
               row-key="id"
               flat
-              class="sticky-header-table"
-              :rows-per-page-options="[10, 20, 0]"
+              class="sticky-header-table modern-table"
+              :rows-per-page-options="[10, 20, 50]"
               :loading="loading"
+              virtual-scroll
+              style="max-height: 500px;"
             >
-              <template v-slot:body="props">
+              <template v-slot:header="props">
                 <q-tr :props="props">
-                  <q-td v-for="col in columns" :key="col.name" :props="props">
-                    {{ props.row[col.field] }}
+                  <q-th v-for="col in props.cols" :key="col.name" :props="props" class="bg-grey-1 text-grey-8">
+                    {{ col.label }}
+                  </q-th>
+                </q-tr>
+              </template>
+              <template v-slot:body="props">
+                <q-tr :props="props" class="hover-bg-grey">
+                  <q-td v-for="col in props.cols" :key="col.name" :props="props">
+                    <span v-if="col.name !== 'regNo' && col.name !== 'name' && props.row[col.field] > 0" class="text-green-7 text-weight-bold">
+                       {{ props.row[col.field] }}
+                    </span>
+                    <span v-else>{{ props.row[col.field] }}</span>
                   </q-td>
                 </q-tr>
               </template>
@@ -130,37 +131,98 @@
 
        <!-- Special Transactions Manager -->
       <div class="col-12">
-        <q-card flat bordered class="bg-white">
-           <q-card-section class="row items-center justify-between">
-              <div class="text-h6 text-weight-bold">Special Transactions (Expenses / Other Income)</div>
-              <div class="q-gutter-sm">
-                <q-btn icon="add_circle" label="Add New Payment" color="green-7" no-caps @click="openTxDialog('Credit')" />
-                <q-btn icon="remove_circle" label="Add New Receipt" color="red-7" no-caps @click="openTxDialog('Debit')" />
-              </div>
+        <q-card class="shadow-soft border-radius-lg bg-white">
+           <q-card-section class="q-pa-md border-bottom bg-grey-1">
+              <div class="text-subtitle1 text-weight-bold">Recent Special Transactions</div>
            </q-card-section>
-           <q-card-section>
+           <q-card-section class="q-pa-none">
               <q-table
                 :rows="transactionStore.sortedTransactions"
                 :columns="txColumns"
                 row-key="id"
                 flat
+                class="modern-table"
               >
-                <template v-slot:body-cell-proof="props">
-                  <q-td :props="props">
-                     <q-btn v-if="props.row.proofName" icon="description" flat round dense color="primary" :title="props.row.proofName" />
-                     <span v-else>-</span>
-                  </q-td>
-                </template>
-                <template v-slot:body-cell-actions="props">
-                  <q-td :props="props">
-                    <q-btn flat round dense icon="edit" color="grey-8" @click="editTx(props.row)" />
-                    <q-btn flat round dense icon="delete" color="negative" @click="deleteTx(props.row.id)" />
-                  </q-td>
-                </template>
+                  <template v-slot:header="props">
+                    <q-tr :props="props">
+                      <q-th v-for="col in props.cols" :key="col.name" :props="props" class="bg-grey-1 text-grey-8">
+                        {{ col.label }}
+                      </q-th>
+                    </q-tr>
+                  </template>
+
+                 <template v-slot:body="props">
+                    <q-tr :props="props" class="hover-bg-grey">
+                       <q-td key="date" :props="props">{{ props.row.date }}</q-td>
+                       <q-td key="description" :props="props" class="text-weight-medium">{{ props.row.description }}</q-td>
+                       <q-td key="type" :props="props">
+                          <q-chip :color="props.row.type === 'Credit' ? 'green-1' : 'red-1'" :text-color="props.row.type === 'Credit' ? 'green-9' : 'red-9'" size="sm" class="text-weight-bold">
+                             {{ props.row.type }}
+                          </q-chip>
+                       </q-td>
+                       <q-td key="amount" :props="props" class="text-right">
+                          <span :class="props.row.type === 'Credit' ? 'text-positive' : 'text-negative'">
+                             {{ props.row.amount }}
+                          </span>
+                       </q-td>
+                        <q-td key="proof" :props="props">
+                           <q-btn v-if="props.row.proofName" icon="description" flat round dense color="primary" size="sm">
+                             <q-tooltip>{{ props.row.proofName }}</q-tooltip>
+                           </q-btn>
+                        </q-td>
+                        <q-td key="actions" :props="props">
+                          <div class="row justify-end q-gutter-sm">
+                            <q-btn flat round dense icon="edit" size="sm" color="grey-7" @click="editTx(props.row)" />
+                            <q-btn flat round dense icon="delete" size="sm" color="negative" @click="deleteTx(props.row.id)" />
+                          </div>
+                        </q-td>
+                    </q-tr>
+                 </template>
               </q-table>
            </q-card-section>
         </q-card>
       </div>
+
+      <!-- Document Upload Section -->
+      <div class="col-12 col-md-4">
+        <q-card class="shadow-soft border-radius-lg bg-white h-full">
+          <q-card-section class="q-pa-md border-bottom bg-grey-1">
+            <div class="text-subtitle1 text-weight-bold">Upload Center</div>
+          </q-card-section>
+          
+          <q-card-section class="q-pa-md">
+            <q-file 
+              outlined 
+              v-model="file" 
+              label="Select Document" 
+              counter
+              dense
+            >
+              <template v-slot:prepend><q-icon name="cloud_upload" /></template>
+            </q-file>
+            
+            <q-select 
+              outlined 
+              v-model="linkedTx" 
+              :options="txOptions"
+              label="Link to Transaction"
+              class="q-mt-md"
+              dense
+              options-dense
+            />
+            
+            <q-btn 
+              label="Upload & Link" 
+              color="black" 
+              class="full-width q-mt-md" 
+              unelevated
+              @click="uploadFile"
+              :disable="!file"
+            />
+          </q-card-section>
+        </q-card>
+      </div>
+
     </div>
 
     <!-- Transaction Dialog -->
@@ -192,11 +254,15 @@
 
 <script setup>
 import { ref, onMounted, reactive, computed } from 'vue'
-import axios from 'axios'
+
+import { useRouter } from 'vue-router'
 import { useTransactionStore } from 'stores/transaction-store'
+import { useUserStore } from 'stores/user-store'
 import { date, useQuasar } from 'quasar'
 
 const transactionStore = useTransactionStore()
+const userStore = useUserStore()
+const router = useRouter()
 
 // ... (Existing variables for file, docType, uploadedDocs, loading, students, columns, SHEET_URL) ...
 const file = ref(null)
@@ -205,11 +271,9 @@ const linkedTx = ref(null)
 const uploadedDocs = ref([
   { id: 1, name: 'Dec_2025_Report.pdf', type: 'Monthly Report', date: '2026-01-01' },
 ])
-const loading = ref(false)
-const students = ref([])
-const columns = ref([])
 
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT_eEKqV-Aolo5VsDjcFXhrXxZcFIgNVGE2dy0r1ESZ4TFEzwZWA8DmFWrY04kY6VRFaUtEcDF_RWHW/pub?output=csv'
+
+
 const $q = useQuasar()
 
 const txOptions = computed(() => {
@@ -225,6 +289,11 @@ const noticeText = ref('')
 function saveNotice() {
   transactionStore.updateNotice(noticeText.value)
   $q.notify({ type: 'positive', message: 'Notice updated successfully!' })
+}
+
+function logout() {
+  userStore.logout()
+  router.push('/login')
 }
 
 // Transaction Management
@@ -326,63 +395,37 @@ function commitTx(payload) {
   txDialog.value = false
 }
 
-// ... (Existing parseCSV, fetchData, uploadFile, onMounted) ...
-function parseCSV(csvText) {
-  const lines = csvText.split('\n');
-  const headers = lines[0].split(',').map(h => h.trim());
+const students = computed(() => transactionStore.students)
+const loading = computed(() => transactionStore.loading)
+const columns = computed(() => {
+  if (students.value.length === 0) return []
   
-  // Generate columns dynamically
-  const cols = headers.map((h, index) => {
-    // Basic mapping
-    let label = h;
-    let field = h.toLowerCase().replace(/[\s.]/g, '_'); // simple slug
-    
-    // Explicit mappings based on known structure
-    if (h === 'Registration No.') field = 'regNo';
-    if (h === 'Name') field = 'name';
-    
-    return {
-      name: field,
-      label: label,
-      field: field,
-      sortable: true,
-      align: index === 0 ? 'left' : (index === 1 ? 'left' : 'right')
+  const coreFields = [
+    { name: 'regNo', label: 'Registration No.', field: 'regNo', align: 'left', sortable: true },
+    { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true }
+  ]
+  
+  const MONTH_LIST = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
+  const monthCols = []
+  
+  MONTH_LIST.forEach(m => {
+    const hasPayment = students.value.some(row => row[m] > 0)
+    if (hasPayment) {
+      monthCols.push({
+        name: m,
+        label: m.charAt(0).toUpperCase() + m.slice(1),
+        field: m,
+        align: 'right',
+        sortable: true
+      })
     }
-  });
-
-  const rows = [];
-  for (let i = 1; i < lines.length; i++) {
-    const currentLine = lines[i].split(',');
-    if (currentLine.length < headers.length) continue; // Skip malformed lines
-
-    const row = { id: i };
-    headers.forEach((h, index) => {
-      let field = cols[index].field;
-      row[field] = currentLine[index]?.trim() || '';
-    });
-    rows.push(row);
-  }
+  })
   
-  return { cols, rows };
-}
-
-async function fetchData() {
-  loading.value = true;
-  try {
-    const response = await axios.get(SHEET_URL + '&t=' + Date.now());
-    const { cols, rows } = parseCSV(response.data);
-    columns.value = cols;
-    students.value = rows;
-  } catch (error) {
-    console.error('Error fetching sheet data:', error);
-  } finally {
-    loading.value = false;
-  }
-}
+  return [...coreFields, ...monthCols]
+})
 
 function uploadFile() {
   if (file.value) {
-    // Size check (Limit to 2MB for localStorage safety)
     if (file.value.size > 2 * 1024 * 1024) {
       alert('File is too large for local storage demonstration (Limit: 2MB).')
       return;
@@ -402,7 +445,6 @@ function uploadFile() {
       })
       
       if (linkedTx.value) {
-        // Pass the base64 data to the store
         transactionStore.linkDocument(linkedTx.value.value, docName, docData)
         linkedTx.value = null
       }
@@ -414,8 +456,39 @@ function uploadFile() {
   }
 }
 
-onMounted(() => {
-  fetchData();
+function fetchData() {
+  transactionStore.fetchAllData()
+}
+
+onMounted(async () => {
+  await transactionStore.fetchAllData()
   noticeText.value = transactionStore.notice
 })
 </script>
+
+<style scoped>
+.font-inter {
+  font-family: 'Inter', 'Roboto', sans-serif;
+}
+.shadow-soft {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+.border-radius-lg {
+  border-radius: 12px;
+}
+.border-bottom {
+  border-bottom: 1px solid #e5e7eb;
+}
+.border-primary {
+  border: 1px solid #4f46e5;
+}
+.h-full { height: 100%; }
+.modern-table :deep(th) {
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.hover-bg-grey:hover {
+  background-color: #f9fafb;
+}
+</style>

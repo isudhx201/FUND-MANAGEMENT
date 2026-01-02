@@ -1,35 +1,45 @@
 <template>
-  <q-page class="q-pa-md bg-grey-1">
-    <div class="container q-mx-auto">
-       <div class="row items-center justify-between q-mb-lg">
-          <div>
-            <h1 class="text-h4 text-weight-bold q-my-sm">Payment Details</h1>
-            <div class="text-subtitle2 text-grey-7">Transparency Report - Student Contributions</div>
+  <q-page class="bg-grey-1 font-inter">
+    <!-- Header -->
+    <div class="q-py-lg bg-white border-bottom q-mb-lg">
+       <div class="container q-mx-auto q-px-md">
+          <div class="row items-center justify-between">
+            <div>
+              <h1 class="text-h4 text-weight-bold q-my-none text-primary">Payment Details</h1>
+              <div class="text-subtitle2 text-grey-7 q-mt-xs">Transparency Report - Student Contributions</div>
+            </div>
+            <q-btn 
+              label="Back to Home" 
+              icon="arrow_back" 
+              outline 
+              rounded
+              color="primary"
+              no-caps 
+              to="/" 
+            />
           </div>
-          <q-btn 
-            label="Back to Home" 
-            icon="arrow_back" 
-            flat 
-            no-caps 
-            to="/" 
-            color="black" 
-          />
        </div>
+    </div>
 
-      <q-card flat bordered class="bg-white">
-        <!-- Search and Filter (Optional) -->
-        <q-card-section>
-          <q-input 
-            v-model="filter" 
-            filled 
-            dense 
-            placeholder="Search by Name or Reg No..." 
-            color="black"
-          >
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
+    <div class="container q-mx-auto q-px-md q-pb-xl">
+      <q-card class="shadow-soft border-radius-lg bg-white overflow-hidden">
+        <!-- Modern Search Bar -->
+        <q-card-section class="q-pa-md bg-grey-1 border-bottom">
+          <div class="row justify-between items-center">
+             <div class="text-h6 text-weight-bold">Batch 2026 List</div>
+             <q-input 
+                v-model="filter" 
+                outlined 
+                dense 
+                placeholder="Search by Name or Reg No..." 
+                class="bg-white search-input"
+                rounded
+              >
+                <template v-slot:prepend>
+                  <q-icon name="search" class="text-grey-5" />
+                </template>
+              </q-input>
+          </div>
         </q-card-section>
 
         <q-card-section class="q-pa-none">
@@ -41,17 +51,45 @@
             :filter="filter"
             :loading="loading"
             :pagination="{ rowsPerPage: 25 }"
+            class="modern-table"
           >
+             <template v-slot:header="props">
+                <q-tr :props="props">
+                  <q-th v-for="col in props.cols" :key="col.name" :props="props" class="text-grey-8 text-weight-bold bg-grey-1">
+                    {{ col.label }}
+                  </q-th>
+                </q-tr>
+             </template>
+
              <template v-slot:body-cell-status="props">
                 <q-td :props="props">
                    <q-chip 
-                    :color="props.value === 'Paid' ? 'green-2' : 'grey-3'" 
+                    :color="props.value === 'Paid' ? 'green-1' : 'grey-2'" 
+                    :text-color="props.value === 'Paid' ? 'green-9' : 'grey-7'"
                     size="sm" 
-                    dense
+                    class="text-weight-bold"
                   >
                     {{ props.value }}
                   </q-chip>
                 </q-td>
+             </template>
+             
+             <!-- Custom formatting for month columns to show checks -->
+             <template v-slot:body="props">
+               <q-tr :props="props" class="hover-bg-grey transition-base">
+                 <q-td v-for="col in props.cols" :key="col.name" :props="props">
+                    <template v-if="isMonthColumn(col.name)">
+                       <div v-if="props.row[col.field] > 0" class="text-green-6 flex flex-center">
+                          <q-icon name="check_circle" size="xs" />
+                          <span class="q-ml-xs text-caption">{{ props.row[col.field] }}</span>
+                       </div>
+                       <div v-else class="text-grey-3 text-center">-</div>
+                    </template>
+                    <template v-else>
+                       {{ props.row[col.field] }}
+                    </template>
+                 </q-td>
+               </q-tr>
              </template>
           </q-table>
         </q-card-section>
@@ -61,106 +99,100 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import { computed, onMounted, ref } from 'vue'
+import { useTransactionStore } from 'stores/transaction-store'
 
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT_eEKqV-Aolo5VsDjcFXhrXxZcFIgNVGE2dy0r1ESZ4TFEzwZWA8DmFWrY04kY6VRFaUtEcDF_RWHW/pub?output=csv'
-
-const loading = ref(true)
-const students = ref([])
-const columns = ref([])
+const transactionStore = useTransactionStore()
 const filter = ref('')
 
-// Helper to check if a string is a month name
+const loading = computed(() => transactionStore.loading)
+const students = computed(() => transactionStore.students)
+const columns = computed(() => {
+  if (students.value.length === 0) return []
+  
+  // Get keys from first student or define them
+  // Better use the logic from your current parseCSV but map to store
+  return generateColumns()
+})
+
 const MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
 
-function parseCSV(csvText) {
-  const lines = csvText.split('\n');
-  const headers = lines[0].split(',').map(h => h.trim());
+function generateColumns() {
+  if (students.value.length === 0) return []
   
-  // Separate core columns from month columns
-  const coreHeaders = []
-  const monthHeaders = []
+  // We need the original headers. Since the store parses them into fields, 
+  // we'll infer columns from student data fields or a standard list.
+  // The store currently maps headers to fields like 'regNo', 'name', 'january' etc.
   
-  headers.forEach((h, index) => {
-    if (MONTHS.includes(h.toLowerCase())) {
-        monthHeaders.push({ name: h, index })
-    } else {
-        coreHeaders.push({ name: h, index })
+  const coreFields = [
+    { name: 'regNo', label: 'Reg No.', field: 'regNo', align: 'left', sortable: true },
+    { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true }
+  ]
+  
+  const monthCols = []
+  MONTHS.forEach(m => {
+    // Check if any student has a payment for this month
+    const hasPayment = students.value.some(row => row[m] > 0)
+    if (hasPayment) {
+      monthCols.push({
+        name: m,
+        label: m.charAt(0).toUpperCase() + m.slice(1),
+        field: m,
+        align: 'right',
+        sortable: true,
+        format: (val) => (val > 0 ? `LKR ${val.toLocaleString()}` : '-')
+      })
     }
   })
-
-  // Sort months: Reorder to show the "Recent" (Last in the sheet usually) first.
-  // Assuming the sheet adds months L->R, we reverse them.
-  monthHeaders.reverse();
-
-  // Reconstruct headers order: Reg No, Name, [Latest Month], [Prev Month]...
-  const sortedHeadersIndices = [
-      ...coreHeaders.map(ch => ch.index),
-      ...monthHeaders.map(mh => mh.index)
-  ]
-
-  // Generate QTable columns
-  const cols = sortedHeadersIndices.map(originalIndex => {
-    const h = headers[originalIndex];
-    let field = h.toLowerCase().replace(/[\s.]/g, '_');
-    
-    if (h === 'Registration No.') field = 'regNo';
-    if (h === 'Name') field = 'name';
-    
-    // For months, we generally assume they are numbers (Fees)
-    const isMonth = MONTHS.includes(h.toLowerCase());
-
-    return {
-      name: field,
-      label: h,
-      field: field,
-      sortable: true,
-      align: isMonth ? 'right' : 'left',
-      // Format numeric values
-      format: isMonth ? (val) => (val ? `LKR ${val}` : '-') : undefined
-    }
-  });
-
-  const rows = [];
-  for (let i = 1; i < lines.length; i++) {
-    const currentLine = lines[i].split(',');
-    if (currentLine.length < headers.length) continue;
-
-    const row = { id: i };
-    // Map using the original headers structure first
-    headers.forEach((h, index) => {
-      let field = h.toLowerCase().replace(/[\s.]/g, '_');
-      if (h === 'Registration No.') field = 'regNo';
-      if (h === 'Name') field = 'name';
-      
-      row[field] = currentLine[index]?.trim() || '';
-    });
-    rows.push(row);
-  }
   
-  return { cols, rows };
+  // Sort months recent first
+  monthCols.reverse()
+  
+  return [...coreFields, ...monthCols]
 }
 
-async function fetchData() {
-  try {
-    const response = await axios.get(SHEET_URL)
-    const { cols, rows } = parseCSV(response.data)
-    columns.value = cols
-    students.value = rows
-    loading.value = false
-  } catch (error) {
-    console.error('Error loading sheet data:', error)
-  }
+const MONTH_NAMES = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
+
+function isMonthColumn(colName) {
+  return MONTH_NAMES.includes(colName.toLowerCase())
 }
 
 onMounted(() => {
-  fetchData()
+  if (transactionStore.students.length === 0) {
+    transactionStore.fetchSheetData()
+  }
 })
 </script>
 
 <style scoped>
+.font-inter {
+  font-family: 'Inter', 'Roboto', sans-serif;
+}
 .container {
-  max-width: 1200px;
+  max-width: 1300px;
+}
+.border-bottom {
+  border-bottom: 1px solid #e5e7eb;
+}
+.shadow-soft {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+.border-radius-lg {
+  border-radius: 12px;
+}
+.search-input {
+  width: 300px;
+}
+.modern-table :deep(th) {
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+.hover-bg-grey:hover {
+  background-color: #f9fafb;
+}
+.transition-base {
+  transition: background-color 0.2s;
 }
 </style>
