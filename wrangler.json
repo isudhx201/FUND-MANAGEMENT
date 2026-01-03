@@ -2,6 +2,8 @@
   "name": "batchfunduov23",
   "compatibility_date": "2025-01-01",
   "assets": {
-    "directory": "./dist/spa"
-  }
+    "directory": "./dist/spa",
+    "binding": "ASSETS"
+  },
+  "main": "src/worker-script.js"
 }
