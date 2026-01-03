@@ -33,7 +33,7 @@
           outlined 
           v-model="password" 
           label="Password" 
-          type="password" 
+          :type="isPwd ? 'password' : 'text'" 
           :color="$q.dark.isActive ? 'blue-3' : 'indigo'"
           :bg-color="$q.dark.isActive ? 'blue-grey-10' : 'white'"
           :label-color="$q.dark.isActive ? 'grey-4' : 'grey-7'"
@@ -42,6 +42,14 @@
         >
           <template v-slot:prepend>
             <q-icon name="lock" :color="$q.dark.isActive ? 'grey-4' : 'grey-5'" />
+          </template>
+          <template v-slot:append>
+            <q-icon
+              :name="isPwd ? 'visibility_off' : 'visibility'"
+              class="cursor-pointer"
+              :color="$q.dark.isActive ? 'grey-4' : 'grey-5'"
+              @click="isPwd = !isPwd"
+            />
           </template>
         </q-input>
         
@@ -78,6 +86,7 @@ import { useQuasar } from 'quasar'
 
 const username = ref('')
 const password = ref('')
+const isPwd = ref(true)
 const error = ref('')
 const router = useRouter()
 const userStore = useUserStore()
