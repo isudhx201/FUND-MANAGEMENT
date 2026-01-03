@@ -92,7 +92,10 @@ const router = useRouter()
 const userStore = useUserStore()
 const $q = useQuasar()
 
-function handleLogin() {
+async function handleLogin() {
+  // Ensure credentials are loaded from Supabase before checking
+  await userStore.fetchCredentials()
+  
   if (userStore.login(username.value, password.value)) {
     router.push('/admin/dashboard')
   } else {

@@ -1,14 +1,20 @@
 import { defineStore } from 'pinia'
+import { supabase } from 'src/supabase'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
     isAdmin: false,
     isAuthenticated: false,
-    username: localStorage.getItem('admin_username') || 'admin',
-    password: localStorage.getItem('admin_password') || 'admin123'
+    username: 'admin', // Default initial values
+    password: 'admin123',
+    isLoaded: false
   }),
   actions: {
-    checkAuth() {
+    async checkAuth() {
+      // 1. Fetch live credentials from Supabase first
+      await this.fetchCredentials()
+
+      // 2. Check local session
       const auth = localStorage.getItem('is_authenticated')
       const role = localStorage.getItem('user_role')
       if (auth === 'true') {
@@ -17,6 +23,24 @@ export const useUserStore = defineStore('user', {
         this.currentUserRole = role
       }
     },
+
+    async fetchCredentials() {
+      const { data, error } = await supabase
+        .from('system_settings')
+        .select('key, value')
+        .in('key', ['admin_username', 'admin_password'])
+      
+      if (error) {
+        console.error('Error fetching credentials:', error)
+      } else if (data) {
+        data.forEach(item => {
+          if (item.key === 'admin_username') this.username = item.value
+          if (item.key === 'admin_password') this.password = item.value
+        })
+      }
+      this.isLoaded = true
+    },
+
     login(inputUsername, inputPassword) {
       const isSuper = inputUsername === 'superadmin' && inputPassword === 'superadmin123'
       const isStandard = inputUsername === this.username && inputPassword === this.password
@@ -26,14 +50,15 @@ export const useUserStore = defineStore('user', {
         this.isAdmin = true
         this.currentUserRole = isSuper ? 'superadmin' : 'admin'
         
-        // Persist session
+        // Persist session locally
         localStorage.setItem('is_authenticated', 'true')
         localStorage.setItem('user_role', this.currentUserRole)
         return true
       }
       return false
     },
-    logout() {
+
+    async logout() {
       this.isAuthenticated = false
       this.isAdmin = false
       this.currentUserRole = null
@@ -42,36 +67,41 @@ export const useUserStore = defineStore('user', {
       localStorage.removeItem('is_authenticated')
       localStorage.removeItem('user_role')
     },
+
     // Requires validation of current credentials to change them
-    updateCredentials(currentUsername, currentPassword, newUsername, newPassword) {
+    async updateCredentials(currentUsername, currentPassword, newUsername, newPassword) {
       if (!newUsername || !newPassword) return false
 
       const isSuperAuth = currentUsername === 'superadmin' && currentPassword === 'superadmin123'
       const isStandardAuth = currentUsername === this.username && currentPassword === this.password
 
-      if (isSuperAuth) {
-        // Superadmin is "Adding/Resetting" the standard user.
-        // We do NOT update the superadmin credentials (they are unremovable/hardcoded).
-        // We update the standard admin credentials.
-        this._setStandardCredentials(newUsername, newPassword)
-        return true
-      }
-      
-      if (isStandardAuth) {
-        // Standard admin updating themselves
-        // Cannot change name to 'superadmin' to avoid conflict
-        if (newUsername === 'superadmin') return false 
-        this._setStandardCredentials(newUsername, newPassword)
-        return true
+      if (isSuperAuth || isStandardAuth) {
+        // Validation for standard user update
+        if (isStandardAuth && newUsername === 'superadmin') return false 
+
+        const success = await this._setStandardCredentials(newUsername, newPassword)
+        return success
       }
 
       return false
     },
-    _setStandardCredentials(user, pass) {
+
+    async _setStandardCredentials(user, pass) {
+      const { error } = await supabase
+        .from('system_settings')
+        .upsert([
+          { key: 'admin_username', value: user },
+          { key: 'admin_password', value: pass }
+        ])
+
+      if (error) {
+        console.error('Error updating credentials in Supabase:', error)
+        return false
+      }
+
       this.username = user
       this.password = pass
-      localStorage.setItem('admin_username', user)
-      localStorage.setItem('admin_password', pass)
+      return true
     }
   }
 })

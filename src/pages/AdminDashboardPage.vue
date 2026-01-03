@@ -379,8 +379,8 @@ function saveNotice() {
   $q.notify({ type: 'positive', message: 'Notice updated successfully!' })
 }
 
-function logout() {
-  userStore.logout()
+async function logout() {
+  await userStore.logout()
   router.push('/login')
 }
 
@@ -410,14 +410,14 @@ function openSettings() {
   settingsDialog.value = true
 }
 
-function saveSettings() {
+async function saveSettings() {
   if (settingsForm.newUsername && settingsForm.newPassword) {
     if (settingsForm.newPassword !== settingsForm.confirmPassword) {
       $q.notify({ type: 'negative', message: 'New passwords do not match!' })
       return
     }
 
-    const success = userStore.updateCredentials(
+    const success = await userStore.updateCredentials(
       settingsForm.currentUsername, 
       settingsForm.currentPassword, 
       settingsForm.newUsername, 
