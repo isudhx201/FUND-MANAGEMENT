@@ -284,8 +284,16 @@
             filled 
             v-model="settingsForm.currentPassword" 
             label="Current Password" 
-            type="password" 
-          />
+            :type="isPwdCurrent ? 'password' : 'text'" 
+          >
+            <template v-slot:append>
+              <q-icon
+                :name="isPwdCurrent ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="isPwdCurrent = !isPwdCurrent"
+              />
+            </template>
+          </q-input>
 
           <q-separator class="q-my-sm" />
           
@@ -295,8 +303,31 @@
             filled 
             v-model="settingsForm.newPassword" 
             label="New Password" 
-            type="password" 
-          />
+            :type="isPwdNew ? 'password' : 'text'" 
+          >
+            <template v-slot:append>
+              <q-icon
+                :name="isPwdNew ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="isPwdNew = !isPwdNew"
+              />
+            </template>
+          </q-input>
+
+          <q-input 
+            filled 
+            v-model="settingsForm.confirmPassword" 
+            label="Confirm New Password" 
+            :type="isPwdConfirm ? 'password' : 'text'" 
+          >
+            <template v-slot:append>
+              <q-icon
+                :name="isPwdConfirm ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="isPwdConfirm = !isPwdConfirm"
+              />
+            </template>
+          </q-input>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -359,19 +390,33 @@ const settingsForm = reactive({
   currentUsername: '',
   currentPassword: '',
   newUsername: '',
-  newPassword: ''
+  newPassword: '',
+  confirmPassword: ''
 })
+
+const isPwdCurrent = ref(true)
+const isPwdNew = ref(true)
+const isPwdConfirm = ref(true)
 
 function openSettings() {
   settingsForm.currentUsername = ''
   settingsForm.currentPassword = ''
   settingsForm.newUsername = userStore.username
-  settingsForm.newPassword = userStore.password // Pre-fill with current standard (optional convenience)
+  settingsForm.newPassword = ''
+  settingsForm.confirmPassword = ''
+  isPwdCurrent.value = true
+  isPwdNew.value = true
+  isPwdConfirm.value = true
   settingsDialog.value = true
 }
 
 function saveSettings() {
   if (settingsForm.newUsername && settingsForm.newPassword) {
+    if (settingsForm.newPassword !== settingsForm.confirmPassword) {
+      $q.notify({ type: 'negative', message: 'New passwords do not match!' })
+      return
+    }
+
     const success = userStore.updateCredentials(
       settingsForm.currentUsername, 
       settingsForm.currentPassword, 
