@@ -2,12 +2,13 @@
   <q-layout view="lHh Lpr lFf" :class="$q.dark.isActive ? 'bg-blue-grey-10 text-white' : 'bg-grey-1 text-black'">
     <q-header :class="$q.dark.isActive ? 'glass-header-dark text-white' : 'glass-header text-grey-9'" class="q-py-xs" height-hint="64">
       <q-toolbar>
-        <q-btn flat no-caps no-wrap dense to="/" class="q-mr-sm logo-btn">
-          <q-avatar size="32px" class="q-mr-sm">
+        <q-btn flat no-caps no-wrap dense to="/" class="q-mr-xs logo-btn">
+          <q-avatar :size="$q.screen.xs ? '38px' : '48px'" class="q-mr-sm q-mr-md-md">
             <img src="~assets/images.png" alt="Logo" />
           </q-avatar>
-          <q-toolbar-title class="text-weight-bold text-h6 font-inter brand-text">
-            2023 BS Batch Fund
+          <q-toolbar-title class="font-inter brand-text text-left">
+            <div :class="$q.screen.xs ? 'text-subtitle2' : 'text-subtitle1'" class="text-weight-bolder" style="line-height:1.1;">Financial Transparency <span class="text-weight-regular">Portal</span></div>
+            <div class="text-weight-medium opacity-70" :style="$q.screen.xs ? 'font-size: 0.65rem; margin-top: 0px;' : 'font-size: 0.75rem; margin-top:-2px;'">FBS 2023 Batch | University of Vavuniya</div>
           </q-toolbar-title>
         </q-btn> 
 

@@ -1,57 +1,64 @@
 <template>
-  <q-page class="font-inter" :class="$q.dark.isActive ? 'bg-blue-grey-10 text-white' : 'bg-indigo-1'">
-    <!-- Header -->
-    <div class="row items-center justify-between q-mb-lg q-gutter-y-md">
-      <div class="col-12 col-sm-auto">
-        <h1 class="text-h4 text-weight-bold q-my-none" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">Admin Portal <span class="text-subtitle1 text-weight-regular vertical-middle q-ml-sm q-pl-sm lt-sm" style="display: block; border-left: none; padding-left: 0;">Dashboard</span><span class="text-subtitle1 text-weight-regular vertical-middle q-ml-sm q-pl-sm gt-xs" :class="$q.dark.isActive ? 'text-grey-4 border-left-dark' : 'text-indigo-4 border-left-indigo'">Dashboard</span></h1>
-        <div class="text-subtitle2 q-mt-xs" :class="$q.dark.isActive ? 'text-grey-4' : 'text-indigo-5'">Manage funds, notices, and verifying documents</div>
+  <q-page class="font-inter q-pa-md q-pa-lg-xl" :class="$q.dark.isActive ? 'bg-blue-grey-10 text-white' : 'bg-indigo-1'">
+    <div class="container q-mx-auto">
+      <!-- Header -->
+      <div class="row items-center justify-between q-mb-lg q-gutter-y-md">
+        <div class="col-12 col-sm-auto">
+          <h1 class="text-h5 text-md-h4 text-weight-bold q-my-none" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">
+            Admin Portal 
+            <span class="text-subtitle1 text-weight-regular vertical-middle q-ml-sm q-pl-sm lt-sm" style="display: block; border-left: none; padding-left: 0;">Dashboard</span>
+            <span class="text-subtitle1 text-weight-regular vertical-middle q-ml-sm q-pl-sm gt-xs" :class="$q.dark.isActive ? 'text-grey-4 border-left-dark' : 'text-indigo-4 border-left-indigo'">Dashboard</span>
+          </h1>
+          <div class="text-caption text-md-subtitle2 q-mt-xs" :class="$q.dark.isActive ? 'text-grey-4' : 'text-indigo-5'">Manage funds, notices, and verifying documents</div>
+        </div>
+        <div class="col-12 col-sm-auto q-gutter-sm flex items-center">
+          <q-btn 
+            label="History" 
+            icon="history" 
+            unelevated 
+            dense
+            :class="$q.dark.isActive ? 'bg-blue-grey-8 text-white shadow-3' : 'bg-indigo-6 text-white shadow-3'"
+            to="/history?mode=admin" 
+            rounded 
+            class="q-px-md"
+          />
+          <q-btn 
+            icon="settings" 
+            unelevated 
+            dense
+            :class="$q.dark.isActive ? 'bg-blue-grey-9 text-grey-3 border-dark' : 'bg-white text-indigo-9 border-indigo'"
+            @click="openSettings" 
+            rounded
+            class="q-px-sm"
+          >
+             <q-tooltip>Settings</q-tooltip>
+          </q-btn>
+          <q-btn 
+            icon="logout" 
+            :color="$q.dark.isActive ? 'red-9' : 'red-1'" 
+            :text-color="$q.dark.isActive ? 'red-1' : 'red-7'"
+            unelevated
+            dense
+            rounded
+            @click="logout" 
+            class="q-px-sm"
+          >
+             <q-tooltip>Logout</q-tooltip>
+          </q-btn>
+        </div>
       </div>
-      <div class="col-12 col-sm-auto q-gutter-sm flex items-center">
-        <q-btn 
-          label="History" 
-          icon="history" 
-          unelevated 
-          dense
-          :class="$q.dark.isActive ? 'bg-blue-grey-8 text-white shadow-3' : 'bg-indigo-6 text-white shadow-3'"
-          to="/history?mode=admin" 
-          rounded 
-          class="q-px-md"
-        />
-        <q-btn 
-          icon="settings" 
-          unelevated 
-          dense
-          :class="$q.dark.isActive ? 'bg-blue-grey-9 text-grey-3 border-dark' : 'bg-white text-indigo-9 border-indigo'"
-          @click="openSettings" 
-          rounded
-          class="q-px-sm"
-        >
-           <q-tooltip>Settings</q-tooltip>
-        </q-btn>
-        <q-btn 
-          icon="logout" 
-          :color="$q.dark.isActive ? 'red-9' : 'red-1'" 
-          :text-color="$q.dark.isActive ? 'red-1' : 'red-7'"
-          unelevated
-          dense
-          rounded
-          @click="logout" 
-          class="q-px-sm"
-        >
-           <q-tooltip>Logout</q-tooltip>
-        </q-btn>
-      </div>
-    </div>
 
-    <div class="row q-col-gutter-lg">
+      <div class="row q-col-gutter-lg">
       <!-- Notice Board Manager -->
       <div class="col-12 col-md-6">
         <q-card class="shadow-soft border-radius-lg h-full" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : 'bg-white'">
-          <q-card-section class="q-pa-md row items-center justify-between" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-white border-bottom-indigo'">
-              <div class="text-subtitle1 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">
+          <q-card-section class="q-pa-md row items-center justify-between q-gutter-y-sm" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-white border-bottom-indigo'">
+              <div class="col-12 col-sm-auto text-subtitle1 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">
                  <div class="d-inline-block q-mr-sm q-pa-xs rounded-borders" :class="$q.dark.isActive ? 'bg-white-10' : 'bg-indigo-1'"><q-icon name="campaign" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-6'" /></div> Notice Board
               </div>
-              <q-btn label="Update Notice" :color="$q.dark.isActive ? 'grey-8' : 'indigo-6'" unelevated rounded size="sm" @click="saveNotice" />
+              <div class="col-12 col-sm-auto text-right">
+                <q-btn label="Update Notice" :color="$q.dark.isActive ? 'grey-8' : 'indigo-6'" unelevated rounded size="sm" @click="saveNotice" class="full-width-xs" />
+              </div>
            </q-card-section>
            <q-card-section class="q-pa-md">
               <q-input 
@@ -72,8 +79,8 @@
       <!-- Quick Actions -->
       <div class="col-12 col-md-6">
         <q-card class="shadow-soft border-radius-lg h-full" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : 'bg-white'">
-           <q-card-section class="q-pa-md" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-white border-bottom-indigo'">
-              <div class="text-subtitle1 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">
+           <q-card-section class="q-pa-md row items-center justify-between q-gutter-y-sm" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-white border-bottom-indigo'">
+              <div class="col-12 col-sm-auto text-subtitle1 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">
                  <div class="d-inline-block q-mr-sm q-pa-xs rounded-borders" :class="$q.dark.isActive ? 'bg-white-10' : 'bg-amber-1'"><q-icon name="bolt" :class="$q.dark.isActive ? 'text-amber-4' : 'text-amber-8'" /></div> Quick Actions
               </div>
            </q-card-section>
@@ -90,65 +97,47 @@
         </q-card>
       </div>
 
-      <!-- Student Records -->
+      <!-- Student Records Access Section -->
       <div class="col-12">
-        <q-card class="shadow-soft border-radius-lg" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : 'bg-white'">
-          <q-card-section class="q-pa-md row items-center justify-between" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-grey-1 border-bottom'">
-             <div class="row items-center">
-                <div class="d-inline-block q-mr-sm q-pa-xs rounded-borders" :class="$q.dark.isActive ? 'bg-white-10' : 'bg-indigo-1'"><q-icon name="table_chart" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-6'" /></div>
-                <div class="text-subtitle1 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">Student Payment Records</div>
+        <q-card class="shadow-soft border-radius-lg overflow-hidden" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : 'bg-white'">
+          <q-card-section class="q-pa-lg">
+             <div class="row items-center justify-between q-gutter-y-sm">
+               <div class="col-12 col-md-auto">
+                 <div class="row items-center no-wrap">
+                   <div class="q-pa-md rounded-borders q-mr-md" :class="$q.dark.isActive ? 'bg-blue-grey-8' : 'bg-indigo-1'">
+                     <q-icon name="payments" size="lg" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-6'" />
+                   </div>
+                   <div>
+                     <div class="text-h6 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">Student Payments</div>
+                     <div class="text-caption text-md-subtitle2" :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-7'">Manage batch contributions</div>
+                   </div>
+                 </div>
+               </div>
+                <div class="col-12 col-md-auto q-gutter-sm flex items-center justify-center">
+                  <q-btn 
+                    label="Open Google Sheet" 
+                    icon="open_in_new" 
+                    unelevated 
+                    rounded
+                    :color="$q.dark.isActive ? 'green-7' : 'green-9'"
+                    href="https://docs.google.com/spreadsheets/d/11n36pHHwUtBPZ3RhO3mR4Eip7n9SVmD8HApfVNvAXBE/edit?usp=sharing"
+                    target="_blank"
+                    class="q-px-lg shadow-1"
+                    no-caps
+                  />
+                  <q-btn 
+                    icon="refresh" 
+                    outline
+                    round
+                    dense
+                    :color="$q.dark.isActive ? 'white' : 'indigo-6'"
+                    @click="fetchData" 
+                    :loading="loading"
+                  >
+                     <q-tooltip>Refresh Data</q-tooltip>
+                  </q-btn>
+                </div>
              </div>
-            <div class="q-gutter-sm">
-               <q-btn 
-                 dense flat icon="refresh" :color="$q.dark.isActive ? 'white' : 'indigo-6'"   
-                 @click="fetchData" :loading="loading" 
-               >
-                 <q-tooltip>Refresh Data</q-tooltip>
-               </q-btn>
-               <q-btn 
-                 label="Go to Sheet" 
-                 icon-right="open_in_new" 
-                 dense flat 
-                 no-caps 
-                 :text-color="$q.dark.isActive ? 'grey-4' : 'indigo-5'"  
-                 href="https://docs.google.com/spreadsheets/d/11n36pHHwUtBPZ3RhO3mR4Eip7n9SVmD8HApfVNvAXBE/edit?usp=sharing"
-                 target="_blank"
-               />
-            </div>
-          </q-card-section>
-          
-          <q-card-section class="q-pa-none">
-            <q-table
-              :rows="students"
-              :columns="columns"
-              row-key="id"
-              flat
-              class="sticky-header-table modern-table"
-              :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : ''"
-              :rows-per-page-options="[10, 20, 50]"
-              :loading="loading"
-              virtual-scroll
-              style="max-height: 500px;"
-              :grid="$q.screen.xs"
-            >
-              <template v-slot:header="props">
-                <q-tr :props="props">
-                  <q-th v-for="col in props.cols" :key="col.name" :props="props" :class="$q.dark.isActive ? 'bg-blue-grey-10 text-grey-4' : 'bg-eef2ff text-indigo-9'">
-                    {{ col.label }}
-                  </q-th>
-                </q-tr>
-              </template>
-              <template v-slot:body="props">
-                <q-tr :props="props" :class="$q.dark.isActive ? 'hover-bg-dark' : 'hover-bg-grey'">
-                  <q-td v-for="col in props.cols" :key="col.name" :props="props">
-                    <span v-if="col.name !== 'regNo' && col.name !== 'name' && props.row[col.field] > 0" class="text-weight-bold" :class="$q.dark.isActive ? 'text-green-4' : 'text-green-7'">
-                       {{ props.row[col.field] }}
-                    </span>
-                    <span v-else>{{ props.row[col.field] }}</span>
-                  </q-td>
-                </q-tr>
-              </template>
-            </q-table>
           </q-card-section>
         </q-card>
       </div>
@@ -156,8 +145,14 @@
        <!-- Special Transactions Manager -->
       <div class="col-12">
         <q-card class="shadow-soft border-radius-lg" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : 'bg-white'">
-           <q-card-section class="q-pa-md" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-white border-bottom-indigo'">
-              <div class="text-subtitle1 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">Recent Special Transactions</div>
+           <q-card-section class="q-pa-md row items-center justify-between q-gutter-y-sm" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-white border-bottom-indigo'">
+              <div class="col-12 col-sm-auto text-subtitle1 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">
+                 <div class="d-inline-block q-mr-sm q-pa-xs rounded-borders" :class="$q.dark.isActive ? 'bg-white-10' : 'bg-indigo-1'"><q-icon name="receipt_long" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-6'" /></div> Special Transactions
+              </div>
+              <div class="col-12 col-sm-auto text-right row items-center justify-end q-gutter-sm">
+                <q-btn flat round dense icon="refresh" :color="$q.dark.isActive ? 'white' : 'indigo-6'" @click="fetchData" :loading="loading" />
+                <q-btn label="View More" :color="$q.dark.isActive ? 'grey-8' : 'indigo-6'" unelevated rounded size="sm" to="/history?mode=admin" class="full-width-xs" />
+              </div>
            </q-card-section>
            <q-card-section class="q-pa-none">
               <q-table
@@ -167,7 +162,6 @@
                 flat
                 class="modern-table"
                 :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : ''"
-                :grid="$q.screen.xs"
               >
                   <template v-slot:header="props">
                     <q-tr :props="props">
@@ -191,11 +185,12 @@
                              {{ props.row.amount }}
                           </span>
                        </q-td>
-                        <q-td key="proof" :props="props">
-                           <q-btn v-if="props.row.proofName" icon="description" flat round dense color="primary" size="sm">
-                             <q-tooltip>{{ props.row.proofName }}</q-tooltip>
-                           </q-btn>
-                        </q-td>
+                         <q-td key="proof" :props="props">
+                            <q-btn v-if="props.row.proofName || props.row.proof_name" icon="description" flat round dense color="primary" size="sm" @click="viewDocument(props.row)">
+                              <q-tooltip>Download: {{ props.row.proofName || props.row.proof_name }}</q-tooltip>
+                            </q-btn>
+                            <span v-else class="text-caption text-grey-5 italic">-</span>
+                         </q-td>
                         <q-td key="actions" :props="props">
                           <div class="row justify-end q-gutter-sm">
                             <q-btn flat round dense icon="edit" size="sm" color="grey-7" @click="editTx(props.row)" />
@@ -212,9 +207,11 @@
       <!-- Document Upload Section -->
       <div class="col-12 col-md-4">
         <q-card class="shadow-soft border-radius-lg h-full" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : 'bg-white'">
-          <q-card-section class="q-pa-md" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-white border-bottom-indigo'">
-            <div class="text-subtitle1 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">Upload Center</div>
-          </q-card-section>
+           <q-card-section class="q-pa-md row items-center justify-between q-gutter-y-sm" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-white border-bottom-indigo'">
+              <div class="col-12 col-sm-auto text-subtitle1 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">
+                 <div class="d-inline-block q-mr-sm q-pa-xs rounded-borders" :class="$q.dark.isActive ? 'bg-white-10' : 'bg-indigo-1'"><q-icon name="cloud_upload" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-6'" /></div> Upload Center
+              </div>
+           </q-card-section>
           
           <q-card-section class="q-pa-md">
             <q-file 
@@ -257,8 +254,9 @@
       </div>
 
     </div>
+  </div>
 
-    <!-- Transaction Dialog -->
+  <!-- Transaction Dialog -->
     <q-dialog v-model="txDialog">
       <q-card style="width: 500px; max-width: 90vw;">
         <q-card-section>
@@ -573,6 +571,11 @@ function deleteTx(id) {
 }
 
 function saveTx() {
+  if (!txForm.amount || !txForm.description) {
+    $q.notify({ type: 'warning', message: 'Please fill in both Amount and Description' })
+    return
+  }
+
   if (txProofFile.value) {
     if (txProofFile.value.size > 2 * 1024 * 1024) {
       alert('File is too large for local storage demonstration (Limit: 2MB).')
@@ -622,34 +625,7 @@ function commitTx(payload) {
   txDialog.value = false
 }
 
-const students = computed(() => transactionStore.students)
 const loading = computed(() => transactionStore.loading)
-const columns = computed(() => {
-  if (students.value.length === 0) return []
-  
-  const coreFields = [
-    { name: 'regNo', label: 'Registration No.', field: 'regNo', align: 'left', sortable: true },
-    { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true }
-  ]
-  
-  const MONTH_LIST = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
-  const monthCols = []
-  
-  MONTH_LIST.forEach(m => {
-    const hasPayment = students.value.some(row => row[m] > 0)
-    if (hasPayment) {
-      monthCols.push({
-        name: m,
-        label: m.charAt(0).toUpperCase() + m.slice(1),
-        field: m,
-        align: 'right',
-        sortable: true
-      })
-    }
-  })
-  
-  return [...coreFields, ...monthCols]
-})
 
 function uploadFile() {
   if (file.value) {
@@ -673,6 +649,7 @@ function uploadFile() {
       
       if (linkedTx.value) {
         transactionStore.linkDocument(linkedTx.value.value, docName, docData)
+        $q.notify({ type: 'positive', message: `Linked ${docName} to transaction successfully!` })
         linkedTx.value = null
       }
 
@@ -680,6 +657,29 @@ function uploadFile() {
     }
     
     reader.readAsDataURL(file.value)
+  }
+}
+
+function viewDocument(row) {
+  const name = row.proofName || row.proof_name;
+  const data = row.proofData || row.proof_data;
+
+  if (!name) return;
+
+  if (data) {
+     const link = document.createElement('a')
+     link.href = data
+     link.download = name
+     document.body.appendChild(link)
+     link.click()
+     document.body.removeChild(link)
+     $q.notify({ type: 'positive', message: 'Downloading document...' })
+  } else {
+    $q.dialog({
+      title: 'Document Unavailable',
+      message: `The file ${name} is linked but its content is missing.`,
+      ok: { label: 'Close', color: 'primary' }
+    })
   }
 }
 
@@ -765,4 +765,13 @@ onMounted(async () => {
   background-color: rgba(255, 255, 255, 0.1);
 }
 .d-inline-block { display: inline-block; }
+.container {
+  max-width: 1400px;
+  width: 100%;
+}
+@media (max-width: 599px) {
+  .full-width-xs {
+    width: 100%;
+  }
+}
 </style>

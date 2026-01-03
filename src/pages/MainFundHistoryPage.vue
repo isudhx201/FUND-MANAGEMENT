@@ -25,16 +25,39 @@
 
     <div class="container q-mx-auto q-px-md q-pb-xl">
       <q-card class="shadow-soft border-radius-lg overflow-hidden" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white border-dark-mode' : 'bg-white'">
+        <!-- Search Bar -->
+        <q-card-section class="q-pa-md border-bottom" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-grey-1'">
+          <div class="row justify-between items-center q-gutter-y-sm">
+             <div class="text-h6 text-weight-bold col-12 col-sm-auto">All Transactions</div>
+             <q-input 
+                v-model="filter" 
+                outlined 
+                dense 
+                placeholder="Search history..." 
+                class="search-input col-12 col-sm-auto"
+                :bg-color="$q.dark.isActive ? 'blue-grey-9' : 'white'"
+                :label-color="$q.dark.isActive ? 'grey-4' : 'grey-7'"
+                :input-class="$q.dark.isActive ? 'text-white' : ''"
+                rounded
+                :dark="$q.dark.isActive"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="search" :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-5'" />
+                </template>
+              </q-input>
+          </div>
+        </q-card-section>
+
         <q-card-section class="q-pa-none">
           <q-table
             :rows="transactionStore.allTransactions"
             :columns="columns"
             row-key="id"
             flat
+            :filter="filter"
             :pagination="{ rowsPerPage: 20 }"
             class="modern-table"
             :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : ''"
-            :grid="$q.screen.xs"
           >
             <template v-slot:header="props">
               <q-tr :props="props">
@@ -69,7 +92,7 @@
                 </q-td>
                   <q-td key="proof" :props="props">
                     <q-btn 
-                      v-if="props.row.proofName" 
+                      v-if="props.row.proofName || props.row.proof_name" 
                       icon="description" 
                       :label="$q.screen.gt.xs ? 'View Proof' : ''" 
                       flat 
@@ -80,7 +103,7 @@
                       @click="viewDocument(props.row)"
                       class="q-px-sm"
                     >
-                      <q-tooltip v-if="$q.screen.xs">View Proof</q-tooltip>
+                      <q-tooltip>Download: {{ props.row.proofName || props.row.proof_name }}</q-tooltip>
                     </q-btn>
                     <span v-else class="text-caption italic" :class="$q.dark.isActive ? 'text-grey-6' : 'text-grey-4'">No document</span>
                  </q-td>
@@ -141,6 +164,8 @@ const transactionStore = useTransactionStore()
 const userStore = useUserStore()
 const route = useRoute()
 const $q = useQuasar()
+
+const filter = ref('')
 
 const columns = [
   { name: 'date', label: 'Date', field: 'date', align: 'left', sortable: true },
@@ -236,22 +261,23 @@ function commitTx(payload) {
 }
 
 function viewDocument(row) {
-  if (!row.proofName) return;
+  const name = row.proofName || row.proof_name;
+  const data = row.proofData || row.proof_data;
 
-  if (row.proofData) {
-     // Create a temporary link to trigger download
+  if (!name) return;
+
+  if (data) {
      const link = document.createElement('a')
-     link.href = row.proofData
-     link.download = row.proofName
+     link.href = data
+     link.download = name
      document.body.appendChild(link)
      link.click()
      document.body.removeChild(link)
      $q.notify({ type: 'positive', message: 'Download started...' })
   } else {
-    // Fallback for older records without data
     $q.dialog({
       title: 'Document Unavailable',
-      message: `Filename: ${row.proofName}<br/><br/>The actual file content is not available for this legacy record.`,
+      message: `Filename: ${name}<br/><br/>The actual file content is not available for this record.`,
       html: true,
       ok: { label: 'Close', color: 'primary' }
     })
@@ -298,6 +324,16 @@ onMounted(() => {
 }
 .hover-bg-grey:hover {
   background-color: #f9fafb;
+}
+.search-input {
+  width: 300px;
+  max-width: 100%;
+}
+.border-bottom {
+  border-bottom: 1px solid #e5e7eb;
+}
+.border-bottom-dark {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 .transition-base {
   transition: background-color 0.2s;

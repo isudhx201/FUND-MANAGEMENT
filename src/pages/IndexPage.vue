@@ -26,7 +26,15 @@
       <!-- Hero Content -->
       <div class="relative-position container q-mx-auto q-px-md full-height flex flex-center column text-center" style="z-index: 2;">
         
-        <!-- Glass Card for Balance -->
+        <!-- Site Title & Hierarchy -->
+        <div class="animate-fade-up q-mb-xl">
+          <h1 class="text-h3 text-md-h2 text-weight-bolder text-white q-mb-xs">
+            Financial Transparency <span class="text-weight-regular opacity-80">Portal</span>
+          </h1>
+          <div class="text-subtitle1 text-md-h6 text-grey-3 text-weight-medium opacity-90 ls-1">
+            FBS 2023 Batch | University of Vavuniya
+          </div>
+        </div>
         <div class="glass-card q-pa-lg-xl q-pa-md q-mb-xl animate-fade-up" style="max-width: 95vw;">
            <div class="text-overline text-uppercase text-weight-bold q-mb-sm text-white opacity-80 ls-2" style="font-size: 0.7rem;">Total Current Fund</div>
            <h1 class="text-h1 text-weight-bolder q-my-sm hero-balance text-gradient">
@@ -241,13 +249,39 @@
     <!-- Footer -->
     <div class="bg-dark text-white q-py-xl">
       <div class="container q-mx-auto q-px-md text-center">
-        <div class="text-h5 text-weight-bold q-mb-md font-inter">2023 BS Batch Fund</div>
+        <div class="text-h5 text-weight-bolder q-mb-sm font-inter">
+          Financial Transparency <span class="text-weight-regular opacity-70">Portal</span>
+        </div>
         <div class="text-grey-5 q-mb-lg text-body2" style="max-width: 500px; margin: 0 auto;">
           Empowering our batch with transparent financial management. Every rupee accounted for.
         </div>
+        
+        <!-- Contact Details -->
+        <div class="row q-col-gutter-lg justify-center q-mb-xl">
+           <div class="col-12 col-sm-auto">
+             <div class="text-weight-bold text-subtitle1 text-indigo-4 q-mb-xs">Treasurer</div>
+             <div class="text-body2 text-grey-4">
+                <q-icon name="person" size="xs" class="q-mr-xs" /> Chamindu 
+                <br>
+                <q-btn flat dense no-caps icon="phone" label="+94 76 645 9431" color="grey-5" class="q-px-sm" href="tel:+94766459431" />
+             </div>
+           </div>
+           <div class="col-12 col-sm-auto gt-xs">
+              <q-separator vertical dark inset class="opacity-20 full-height" />
+           </div>
+           <div class="col-12 col-sm-auto">
+             <div class="text-weight-bold text-subtitle1 text-indigo-4 q-mb-xs">Batch Representative</div>
+             <div class="text-body2 text-grey-4">
+                <q-icon name="person" size="xs" class="q-mr-xs" /> Chamod
+                <br>
+                <q-btn flat dense no-caps icon="phone" label="+94 74 207 5079" color="grey-5" class="q-px-sm" href="tel:+94742075079" />
+             </div>
+           </div>
+        </div>
+
         <q-separator dark class="q-my-lg opacity-20" />
         <div class="text-caption text-grey-6">
-          &copy; 2026 2023 BS Batch Fund Management System. All rights reserved.
+          &copy; 2023 BS Batch Fund Management System. Developed by Isuru Dhananjaya. All rights reserved.
         </div>
       </div>
     </div>

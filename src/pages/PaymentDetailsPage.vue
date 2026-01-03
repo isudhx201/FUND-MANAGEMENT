@@ -8,9 +8,22 @@
                <h1 class="text-h4 text-weight-bold q-my-none" :class="$q.dark.isActive ? 'text-white' : 'text-primary'">Payment Details</h1>
                <div class="text-subtitle2 q-mt-xs" :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-7'">Transparency Report - Student Contributions</div>
              </div>
-             <div class="col-12 col-sm-auto">
+             <div class="col-12 col-sm-auto q-gutter-x-sm">
                <q-btn 
-                 label="Back to Home" 
+                 label="Full Year Sheet" 
+                 icon="open_in_new" 
+                 unelevated
+                 rounded
+                 dense
+                 :color="$q.dark.isActive ? 'blue-grey-8' : 'green-1'"
+                 :text-color="$q.dark.isActive ? 'white' : 'green-9'"
+                 no-caps 
+                 href="https://docs.google.com/spreadsheets/d/e/2PACX-1vT_eEKqV-Aolo5VsDjcFXhrXxZcFIgNVGE2dy0r1ESZ4TFEzwZWA8DmFWrY04kY6VRFaUtEcDF_RWHW/pubhtml"
+                 target="_blank"
+                 class="q-px-md shadow-1"
+               />
+               <q-btn 
+                 label="Back" 
                  icon="arrow_back" 
                  outline 
                  rounded

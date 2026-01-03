@@ -30,7 +30,8 @@ export const useTransactionStore = defineStore('transactions', {
 
       return Object.keys(sums).map(month => {
         const monthIndex = MONTHS.indexOf(month)
-        const dateStr = `2026-${String(monthIndex + 1).padStart(2, '0')}-28`
+        const currentYear = new Date().getFullYear()
+        const dateStr = `${currentYear}-${String(monthIndex + 1).padStart(2, '0')}-28`
         
         return {
           id: `monthly-${month}`,
@@ -146,8 +147,13 @@ export const useTransactionStore = defineStore('transactions', {
       
       if (error) {
         console.error('Error fetching transactions:', error)
-      } else {
-        this.transactions = data
+      } else if (data) {
+        this.transactions = data.map(t => ({
+          ...t,
+          // Ensure both exist for compatibility
+          proofName: t.proofName || t.proof_name || null,
+          proofData: t.proofData || t.proof_data || null
+        }))
       }
     },
 
@@ -166,32 +172,36 @@ export const useTransactionStore = defineStore('transactions', {
     },
 
     async addTransaction(transaction) {
-      const payload = {
-        id: Date.now(), // Still using client-side ID for simplicity, or we can omit it and let DB gen (requires changing logic to reload)
-        ...transaction
-      }
-      
-      // We'll let Supabase generate proper types if needed, but we used BigInt for ID in schema so Date.now() is fine.
-      const { error } = await supabase
+      this.loading = true
+      // We omit ID and let DB generate it via Identity Column
+      const { data, error } = await supabase
         .from('transactions')
         .insert([
           {
-            id: payload.id,
-            date: payload.date,
-            description: payload.description,
-            type: payload.type,
-            amount: payload.amount,
-            proof_name: payload.proofName,
-            proof_data: payload.proofData
+            date: transaction.date,
+            description: transaction.description,
+            type: transaction.type,
+            amount: transaction.amount,
+            proof_name: transaction.proofName || null,
+            proof_data: transaction.proofData || null
           }
         ])
+        .select()
+        .single()
 
       if (error) {
         console.error('Error adding transaction:', error)
         alert('Failed to save transaction')
-      } else {
-        this.transactions.push(payload)
+      } else if (data) {
+        // Map the DB fields back to the local state format
+        const localTx = {
+          ...data,
+          proofName: data.proof_name,
+          proofData: data.proof_data
+        }
+        this.transactions.push(localTx)
       }
+      this.loading = false
     },
 
     async updateTransaction(updatedTx) {
@@ -211,9 +221,14 @@ export const useTransactionStore = defineStore('transactions', {
         console.error('Error updating transaction:', error)
         alert('Failed to update transaction')
       } else {
-        const index = this.transactions.findIndex(t => t.id === updatedTx.id)
+        const index = this.transactions.findIndex(t => String(t.id) === String(updatedTx.id))
         if (index !== -1) {
-          this.transactions[index] = updatedTx
+          // Ensure we preserve the camelCase naming in local state
+          this.transactions[index] = {
+            ...updatedTx,
+            proofName: updatedTx.proofName,
+            proofData: updatedTx.proofData
+          }
         }
       }
     },
@@ -233,8 +248,6 @@ export const useTransactionStore = defineStore('transactions', {
     },
 
     async linkDocument(txId, docName, docData) {
-      // Find the tx first to make sure it exists in local state or refetch?
-      // Just update it
       const { error } = await supabase
         .from('transactions')
         .update({
@@ -246,10 +259,14 @@ export const useTransactionStore = defineStore('transactions', {
       if (error) {
          console.error('Link doc error', error)
       } else {
-        const tx = this.transactions.find(t => t.id === txId)
-        if (tx) {
-          tx.proofName = docName
-          tx.proofData = docData
+        const index = this.transactions.findIndex(t => String(t.id) === String(txId))
+        if (index !== -1) {
+          // Replace object to ensure reactivity
+          this.transactions[index] = {
+            ...this.transactions[index],
+            proofName: docName,
+            proofData: docData
+          }
         }
       }
     },
