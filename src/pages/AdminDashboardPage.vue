@@ -1,26 +1,36 @@
 <template>
-  <q-page class="q-pa-md bg-grey-1 font-inter">
+  <q-page class="font-inter" :class="$q.dark.isActive ? 'bg-blue-grey-10 text-white' : 'bg-indigo-1'">
     <!-- Header -->
     <div class="row items-center justify-between q-mb-lg">
       <div>
-        <h1 class="text-h4 text-weight-bold q-my-none text-primary">Admin Dashboard</h1>
-        <div class="text-subtitle2 text-grey-7 q-mt-xs">Manage funds, notices, and verifying documents</div>
+        <h1 class="text-h4 text-weight-bold q-my-none" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">Admin Portal <span class="text-subtitle1 text-weight-regular vertical-middle q-ml-sm q-pl-sm" :class="$q.dark.isActive ? 'text-grey-4 border-left-dark' : 'text-indigo-4 border-left-indigo'">Dashboard</span></h1>
+        <div class="text-subtitle2 q-mt-xs" :class="$q.dark.isActive ? 'text-grey-4' : 'text-indigo-5'">Manage funds, notices, and verifying documents</div>
       </div>
       <div class="q-gutter-sm">
         <q-btn 
           label="Master History" 
           icon="history" 
           unelevated 
-          class="bg-white text-primary border-primary"
+          :class="$q.dark.isActive ? 'bg-blue-grey-8 text-white shadow-3' : 'bg-indigo-6 text-white shadow-3 hover-scale'"
           to="/history?mode=admin" 
+          rounded 
+        />
+        <q-btn 
+          label="Settings" 
+          icon="settings" 
+          unelevated 
+          :class="$q.dark.isActive ? 'bg-blue-grey-9 text-grey-3 border-dark' : 'bg-white text-indigo-9 border-indigo'"
+          @click="openSettings" 
+          rounded
           no-caps 
         />
         <q-btn 
           label="Logout" 
           icon="logout" 
-          color="red-1" 
-          text-color="negative"
+          :color="$q.dark.isActive ? 'red-9' : 'red-1'" 
+          :text-color="$q.dark.isActive ? 'red-1' : 'red-7'"
           unelevated
+          rounded
           @click="logout" 
           no-caps 
         />
@@ -30,12 +40,12 @@
     <div class="row q-col-gutter-lg">
       <!-- Notice Board Manager -->
       <div class="col-12 col-md-6">
-        <q-card class="shadow-soft border-radius-lg bg-white h-full">
-           <q-card-section class="q-pa-md border-bottom row items-center justify-between bg-grey-1">
-              <div class="text-subtitle1 text-weight-bold">
-                 <q-icon name="campaign" class="q-mr-sm text-primary" /> Notice Board
+        <q-card class="shadow-soft border-radius-lg h-full" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : 'bg-white'">
+          <q-card-section class="q-pa-md row items-center justify-between" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-white border-bottom-indigo'">
+              <div class="text-subtitle1 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">
+                 <div class="d-inline-block q-mr-sm q-pa-xs rounded-borders" :class="$q.dark.isActive ? 'bg-white-10' : 'bg-indigo-1'"><q-icon name="campaign" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-6'" /></div> Notice Board
               </div>
-              <q-btn label="Update Notice" color="primary" unelevated size="sm" @click="saveNotice" />
+              <q-btn label="Update Notice" :color="$q.dark.isActive ? 'grey-8' : 'indigo-6'" unelevated rounded size="sm" @click="saveNotice" />
            </q-card-section>
            <q-card-section class="q-pa-md">
               <q-input 
@@ -45,7 +55,9 @@
                 placeholder="Enter important announcements here..." 
                 hint="Visible on the homepage top banner."
                 autogrow
-                bg-color="white"
+                :bg-color="$q.dark.isActive ? 'blue-grey-10' : 'white'"
+                :label-color="$q.dark.isActive ? 'grey-4' : 'grey-7'"
+                :input-class="$q.dark.isActive ? 'text-white' : ''"
               />
            </q-card-section>
         </q-card>
@@ -53,16 +65,16 @@
 
       <!-- Quick Actions -->
       <div class="col-12 col-md-6">
-        <q-card class="shadow-soft border-radius-lg bg-white h-full">
-           <q-card-section class="q-pa-md border-bottom bg-grey-1">
-              <div class="text-subtitle1 text-weight-bold">
-                 <q-icon name="bolt" class="q-mr-sm text-warning" /> Quick Actions
+        <q-card class="shadow-soft border-radius-lg h-full" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : 'bg-white'">
+           <q-card-section class="q-pa-md" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-white border-bottom-indigo'">
+              <div class="text-subtitle1 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">
+                 <div class="d-inline-block q-mr-sm q-pa-xs rounded-borders" :class="$q.dark.isActive ? 'bg-white-10' : 'bg-amber-1'"><q-icon name="bolt" :class="$q.dark.isActive ? 'text-amber-4' : 'text-amber-8'" /></div> Quick Actions
               </div>
            </q-card-section>
            <q-card-section class="q-pa-md text-center row flex-center" style="min-height: 120px;">
               <div class="q-gutter-md">
-                 <q-btn icon="add_circle" label="Add Income" color="green-6" unelevated Stack class="q-px-lg q-py-sm" @click="openTxDialog('Credit')" />
-                 <q-btn icon="remove_circle" label="Add Expense" color="red-5" unelevated Stack class="q-px-lg q-py-sm" @click="openTxDialog('Debit')" />
+                  <q-btn icon="add_circle" label="Add Income" color="green-6" unelevated rounded class="q-px-lg q-py-sm shadow-2 hover-scale" @click="openTxDialog('Credit')" />
+                  <q-btn icon="remove_circle" label="Add Expense" color="deep-orange-5" unelevated rounded class="q-px-lg q-py-sm shadow-2 hover-scale" @click="openTxDialog('Debit')" />
               </div>
            </q-card-section>
         </q-card>
@@ -70,15 +82,15 @@
 
       <!-- Student Records -->
       <div class="col-12">
-        <q-card class="shadow-soft border-radius-lg bg-white">
-          <q-card-section class="q-pa-md border-bottom row items-center justify-between bg-grey-1">
-            <div class="row items-center">
-               <q-icon name="table_chart" class="q-mr-sm text-grey-7" />
-               <div class="text-subtitle1 text-weight-bold">Student Payment Records</div>
-            </div>
+        <q-card class="shadow-soft border-radius-lg" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : 'bg-white'">
+          <q-card-section class="q-pa-md row items-center justify-between" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-grey-1 border-bottom'">
+             <div class="row items-center">
+                <div class="d-inline-block q-mr-sm q-pa-xs rounded-borders" :class="$q.dark.isActive ? 'bg-white-10' : 'bg-indigo-1'"><q-icon name="table_chart" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-6'" /></div>
+                <div class="text-subtitle1 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">Student Payment Records</div>
+             </div>
             <div class="q-gutter-sm">
                <q-btn 
-                 dense flat icon="refresh" color="primary" 
+                 dense flat icon="refresh" :color="$q.dark.isActive ? 'white' : 'indigo-6'"   
                  @click="fetchData" :loading="loading" 
                >
                  <q-tooltip>Refresh Data</q-tooltip>
@@ -88,8 +100,8 @@
                  icon-right="open_in_new" 
                  dense flat 
                  no-caps 
-                 text-color="grey-8" 
-                 href="https://docs.google.com/spreadsheets/d/e/2PACX-1vT_eEKqV-Aolo5VsDjcFXhrXxZcFIgNVGE2dy0r1ESZ4TFEzwZWA8DmFWrY04kY6VRFaUtEcDF_RWHW/pubhtml"
+                 :text-color="$q.dark.isActive ? 'grey-4' : 'indigo-5'"  
+                 href="https://docs.google.com/spreadsheets/d/11n36pHHwUtBPZ3RhO3mR4Eip7n9SVmD8HApfVNvAXBE/edit?usp=sharing"
                  target="_blank"
                />
             </div>
@@ -102,6 +114,7 @@
               row-key="id"
               flat
               class="sticky-header-table modern-table"
+              :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : ''"
               :rows-per-page-options="[10, 20, 50]"
               :loading="loading"
               virtual-scroll
@@ -109,15 +122,15 @@
             >
               <template v-slot:header="props">
                 <q-tr :props="props">
-                  <q-th v-for="col in props.cols" :key="col.name" :props="props" class="bg-grey-1 text-grey-8">
+                  <q-th v-for="col in props.cols" :key="col.name" :props="props" :class="$q.dark.isActive ? 'bg-blue-grey-10 text-grey-4' : 'bg-eef2ff text-indigo-9'">
                     {{ col.label }}
                   </q-th>
                 </q-tr>
               </template>
               <template v-slot:body="props">
-                <q-tr :props="props" class="hover-bg-grey">
+                <q-tr :props="props" :class="$q.dark.isActive ? 'hover-bg-dark' : 'hover-bg-grey'">
                   <q-td v-for="col in props.cols" :key="col.name" :props="props">
-                    <span v-if="col.name !== 'regNo' && col.name !== 'name' && props.row[col.field] > 0" class="text-green-7 text-weight-bold">
+                    <span v-if="col.name !== 'regNo' && col.name !== 'name' && props.row[col.field] > 0" class="text-weight-bold" :class="$q.dark.isActive ? 'text-green-4' : 'text-green-7'">
                        {{ props.row[col.field] }}
                     </span>
                     <span v-else>{{ props.row[col.field] }}</span>
@@ -131,9 +144,9 @@
 
        <!-- Special Transactions Manager -->
       <div class="col-12">
-        <q-card class="shadow-soft border-radius-lg bg-white">
-           <q-card-section class="q-pa-md border-bottom bg-grey-1">
-              <div class="text-subtitle1 text-weight-bold">Recent Special Transactions</div>
+        <q-card class="shadow-soft border-radius-lg" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : 'bg-white'">
+           <q-card-section class="q-pa-md" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-white border-bottom-indigo'">
+              <div class="text-subtitle1 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">Recent Special Transactions</div>
            </q-card-section>
            <q-card-section class="q-pa-none">
               <q-table
@@ -142,21 +155,22 @@
                 row-key="id"
                 flat
                 class="modern-table"
+                :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : ''"
               >
                   <template v-slot:header="props">
                     <q-tr :props="props">
-                      <q-th v-for="col in props.cols" :key="col.name" :props="props" class="bg-grey-1 text-grey-8">
+                      <q-th v-for="col in props.cols" :key="col.name" :props="props" :class="$q.dark.isActive ? 'bg-blue-grey-10 text-grey-4' : 'bg-eef2ff text-indigo-9'">
                         {{ col.label }}
                       </q-th>
                     </q-tr>
                   </template>
 
                  <template v-slot:body="props">
-                    <q-tr :props="props" class="hover-bg-grey">
+                    <q-tr :props="props" :class="$q.dark.isActive ? 'hover-bg-dark' : 'hover-bg-grey'">
                        <q-td key="date" :props="props">{{ props.row.date }}</q-td>
                        <q-td key="description" :props="props" class="text-weight-medium">{{ props.row.description }}</q-td>
                        <q-td key="type" :props="props">
-                          <q-chip :color="props.row.type === 'Credit' ? 'green-1' : 'red-1'" :text-color="props.row.type === 'Credit' ? 'green-9' : 'red-9'" size="sm" class="text-weight-bold">
+                          <q-chip :color="props.row.type === 'Credit' ? ($q.dark.isActive ? 'green-9' : 'green-1') : ($q.dark.isActive ? 'red-9' : 'red-1')" :text-color="props.row.type === 'Credit' ? ($q.dark.isActive ? 'green-1' : 'green-9') : ($q.dark.isActive ? 'red-1' : 'red-9')" size="sm" class="text-weight-bold shadow-1">
                              {{ props.row.type }}
                           </q-chip>
                        </q-td>
@@ -185,9 +199,9 @@
 
       <!-- Document Upload Section -->
       <div class="col-12 col-md-4">
-        <q-card class="shadow-soft border-radius-lg bg-white h-full">
-          <q-card-section class="q-pa-md border-bottom bg-grey-1">
-            <div class="text-subtitle1 text-weight-bold">Upload Center</div>
+        <q-card class="shadow-soft border-radius-lg h-full" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : 'bg-white'">
+          <q-card-section class="q-pa-md" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-white border-bottom-indigo'">
+            <div class="text-subtitle1 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">Upload Center</div>
           </q-card-section>
           
           <q-card-section class="q-pa-md">
@@ -197,6 +211,9 @@
               label="Select Document" 
               counter
               dense
+              :bg-color="$q.dark.isActive ? 'blue-grey-10' : 'white'"
+              :label-color="$q.dark.isActive ? 'grey-4' : 'grey-7'"
+              :input-class="$q.dark.isActive ? 'text-white' : ''"
             >
               <template v-slot:prepend><q-icon name="cloud_upload" /></template>
             </q-file>
@@ -209,13 +226,17 @@
               class="q-mt-md"
               dense
               options-dense
+              :bg-color="$q.dark.isActive ? 'blue-grey-10' : 'white'"
+              :label-color="$q.dark.isActive ? 'grey-4' : 'grey-7'"
+              :input-class="$q.dark.isActive ? 'text-white' : ''"
             />
             
             <q-btn 
               label="Upload & Link" 
-              color="black" 
-              class="full-width q-mt-md" 
+              :color="$q.dark.isActive ? 'grey-8' : 'indigo-9'"  
+              class="full-width q-mt-md shadow-2" 
               unelevated
+              rounded
               @click="uploadFile"
               :disable="!file"
             />
@@ -243,8 +264,44 @@
         </q-card-section>
         
         <q-card-actions align="right">
-          <q-btn flat label="Cancel" v-close-popup />
-          <q-btn flat label="Save" color="primary" @click="saveTx" />
+          <q-btn flat label="Cancel" v-close-popup :color="$q.dark.isActive ? 'white' : 'dark'" />
+          <q-btn flat label="Save" :color="$q.dark.isActive ? 'amber-5' : 'indigo-6'" @click="saveTx" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <!-- Settings Dialog -->
+    <q-dialog v-model="settingsDialog">
+      <q-card style="width: 400px; max-width: 90vw;">
+        <q-card-section>
+          <div class="text-h6">Admin Settings</div>
+        </q-card-section>
+
+        <q-card-section class="q-gutter-md">
+          <div class="text-subtitle2 text-grey-7">Verify Identity</div>
+          <q-input filled v-model="settingsForm.currentUsername" label="Current Username" />
+          <q-input 
+            filled 
+            v-model="settingsForm.currentPassword" 
+            label="Current Password" 
+            type="password" 
+          />
+
+          <q-separator class="q-my-sm" />
+          
+          <div class="text-subtitle2 text-grey-7">New Credentials (Standard Admin)</div>
+          <q-input filled v-model="settingsForm.newUsername" label="New Username" />
+          <q-input 
+            filled 
+            v-model="settingsForm.newPassword" 
+            label="New Password" 
+            type="password" 
+          />
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" v-close-popup :color="$q.dark.isActive ? 'white' : 'dark'" />
+          <q-btn flat label="Update" :color="$q.dark.isActive ? 'amber-5' : 'indigo-6'" @click="saveSettings" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -294,6 +351,43 @@ function saveNotice() {
 function logout() {
   userStore.logout()
   router.push('/login')
+}
+
+// Settings
+const settingsDialog = ref(false)
+const settingsForm = reactive({
+  currentUsername: '',
+  currentPassword: '',
+  newUsername: '',
+  newPassword: ''
+})
+
+function openSettings() {
+  settingsForm.currentUsername = ''
+  settingsForm.currentPassword = ''
+  settingsForm.newUsername = userStore.username
+  settingsForm.newPassword = userStore.password // Pre-fill with current standard (optional convenience)
+  settingsDialog.value = true
+}
+
+function saveSettings() {
+  if (settingsForm.newUsername && settingsForm.newPassword) {
+    const success = userStore.updateCredentials(
+      settingsForm.currentUsername, 
+      settingsForm.currentPassword, 
+      settingsForm.newUsername, 
+      settingsForm.newPassword
+    )
+    
+    if (success) {
+      $q.notify({ type: 'positive', message: 'Credentials updated successfully!' })
+      settingsDialog.value = false
+    } else {
+      $q.notify({ type: 'negative', message: 'Verification failed. Checks credentials.' })
+    }
+  } else {
+    $q.notify({ type: 'warning', message: 'New fields cannot be empty' })
+  }
 }
 
 // Transaction Management
@@ -476,8 +570,14 @@ onMounted(async () => {
 .border-radius-lg {
   border-radius: 12px;
 }
+.border-left {
+  border-left: 2px solid #e5e7eb;
+}
 .border-bottom {
   border-bottom: 1px solid #e5e7eb;
+}
+.border-grey {
+  border: 1px solid #e5e7eb;
 }
 .border-primary {
   border: 1px solid #4f46e5;
@@ -491,4 +591,45 @@ onMounted(async () => {
 .hover-bg-grey:hover {
   background-color: #f9fafb;
 }
+
+.hover-scale {
+  transition: transform 0.2s;
+}
+.hover-scale:hover {
+  transform: translateY(-2px);
+}
+.border-left-indigo {
+  border-left: 2px solid #a5b4fc; /* indigo-3 */
+}
+.border-left-dark {
+  border-left: 2px solid #94a3b8; /* slate-400 */
+}
+.border-bottom-indigo {
+  border-bottom: 1px solid #e0e7ff; /* indigo-1/2 */
+}
+.border-bottom-dark {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.border-indigo {
+  border: 1px solid #c7d2fe;
+}
+.border-dark {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.modern-table :deep(th) {
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  /* Colors handled dymamically in template now */
+}
+.bg-eef2ff {
+  background-color: #eef2ff;
+}
+.hover-bg-dark:hover {
+  background-color: rgba(255, 255, 255, 0.05); /* Slight light on hover */
+}
+.bg-white-10 {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.d-inline-block { display: inline-block; }
 </style>

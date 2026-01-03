@@ -1,19 +1,19 @@
 <template>
-  <q-page class="bg-grey-1 font-inter">
+  <q-page class="font-inter" :class="$q.dark.isActive ? 'bg-blue-grey-10 text-white' : 'bg-grey-1'">
     <!-- Header -->
-    <div class="q-py-lg bg-white border-bottom q-mb-lg">
+    <div class="q-py-lg border-bottom q-mb-lg" :class="$q.dark.isActive ? 'bg-blue-grey-9 border-bottom-dark' : 'bg-white border-bottom'">
        <div class="container q-mx-auto q-px-md">
           <div class="row items-center justify-between">
             <div>
-              <h1 class="text-h4 text-weight-bold q-my-none text-primary">Payment Details</h1>
-              <div class="text-subtitle2 text-grey-7 q-mt-xs">Transparency Report - Student Contributions</div>
+              <h1 class="text-h4 text-weight-bold q-my-none" :class="$q.dark.isActive ? 'text-white' : 'text-primary'">Payment Details</h1>
+              <div class="text-subtitle2 q-mt-xs" :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-7'">Transparency Report - Student Contributions</div>
             </div>
             <q-btn 
               label="Back to Home" 
               icon="arrow_back" 
               outline 
               rounded
-              color="primary"
+              :color="$q.dark.isActive ? 'white' : 'primary'"
               no-caps 
               to="/" 
             />
@@ -22,9 +22,9 @@
     </div>
 
     <div class="container q-mx-auto q-px-md q-pb-xl">
-      <q-card class="shadow-soft border-radius-lg bg-white overflow-hidden">
+      <q-card class="shadow-soft border-radius-lg overflow-hidden" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white border-dark-mode' : 'bg-white'">
         <!-- Modern Search Bar -->
-        <q-card-section class="q-pa-md bg-grey-1 border-bottom">
+        <q-card-section class="q-pa-md border-bottom" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-grey-1'">
           <div class="row justify-between items-center">
              <div class="text-h6 text-weight-bold">Batch 2026 List</div>
              <q-input 
@@ -32,11 +32,15 @@
                 outlined 
                 dense 
                 placeholder="Search by Name or Reg No..." 
-                class="bg-white search-input"
+                class="search-input"
+                :bg-color="$q.dark.isActive ? 'blue-grey-9' : 'white'"
+                :label-color="$q.dark.isActive ? 'grey-4' : 'grey-7'"
+                :input-class="$q.dark.isActive ? 'text-white' : ''"
                 rounded
+                :dark="$q.dark.isActive"
               >
                 <template v-slot:prepend>
-                  <q-icon name="search" class="text-grey-5" />
+                  <q-icon name="search" :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-5'" />
                 </template>
               </q-input>
           </div>
@@ -52,10 +56,11 @@
             :loading="loading"
             :pagination="{ rowsPerPage: 25 }"
             class="modern-table"
+            :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : ''"
           >
              <template v-slot:header="props">
                 <q-tr :props="props">
-                  <q-th v-for="col in props.cols" :key="col.name" :props="props" class="text-grey-8 text-weight-bold bg-grey-1">
+                  <q-th v-for="col in props.cols" :key="col.name" :props="props" class="text-weight-bold" :class="$q.dark.isActive ? 'bg-blue-grey-10 text-grey-4' : 'text-grey-8 bg-grey-1'">
                     {{ col.label }}
                   </q-th>
                 </q-tr>
@@ -64,8 +69,8 @@
              <template v-slot:body-cell-status="props">
                 <q-td :props="props">
                    <q-chip 
-                    :color="props.value === 'Paid' ? 'green-1' : 'grey-2'" 
-                    :text-color="props.value === 'Paid' ? 'green-9' : 'grey-7'"
+                    :color="props.value === 'Paid' ? ($q.dark.isActive ? 'green-9' : 'green-1') : ($q.dark.isActive ? 'grey-8' : 'grey-2')" 
+                    :text-color="props.value === 'Paid' ? ($q.dark.isActive ? 'green-1' : 'green-9') : ($q.dark.isActive ? 'grey-4' : 'grey-7')"
                     size="sm" 
                     class="text-weight-bold"
                   >
@@ -76,14 +81,14 @@
              
              <!-- Custom formatting for month columns to show checks -->
              <template v-slot:body="props">
-               <q-tr :props="props" class="hover-bg-grey transition-base">
+               <q-tr :props="props" class="transition-base" :class="$q.dark.isActive ? 'hover-bg-dark' : 'hover-bg-grey'">
                  <q-td v-for="col in props.cols" :key="col.name" :props="props">
                     <template v-if="isMonthColumn(col.name)">
-                       <div v-if="props.row[col.field] > 0" class="text-green-6 flex flex-center">
+                       <div v-if="props.row[col.field] > 0" class="flex flex-center" :class="$q.dark.isActive ? 'text-green-4' : 'text-green-6'">
                           <q-icon name="check_circle" size="xs" />
                           <span class="q-ml-xs text-caption">{{ props.row[col.field] }}</span>
                        </div>
-                       <div v-else class="text-grey-3 text-center">-</div>
+                       <div v-else class="text-center" :class="$q.dark.isActive ? 'text-grey-7' : 'text-grey-3'">-</div>
                     </template>
                     <template v-else>
                        {{ props.row[col.field] }}

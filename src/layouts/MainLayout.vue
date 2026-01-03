@@ -1,6 +1,6 @@
 <template>
-  <q-layout view="lHh Lpr lFf" class="bg-grey-1">
-    <q-header class="glass-header text-grey-9 q-py-xs" height-hint="64">
+  <q-layout view="lHh Lpr lFf" :class="$q.dark.isActive ? 'bg-blue-grey-10 text-white' : 'bg-grey-1 text-black'">
+    <q-header :class="$q.dark.isActive ? 'glass-header-dark text-white' : 'glass-header text-grey-9'" class="q-py-xs" height-hint="64">
       <q-toolbar>
         <q-btn flat no-caps no-wrap dense to="/" class="q-mr-sm logo-btn">
           <q-avatar size="32px" class="q-mr-sm">
@@ -28,23 +28,29 @@
             no-caps 
             rounded 
             class="nav-btn text-weight-medium"
-            to="/payment-details" 
-            label="Payment Details"
-          />
-          <q-btn 
-            flat 
-            no-caps 
-            rounded 
-            class="nav-btn text-weight-medium"
             to="/history" 
             label="History"
           />
-          <div class="q-mx-sm h-20 bg-grey-3" style="width: 1px;"></div>
+          
+          <!-- Theme Toggle -->
+          <q-btn 
+            flat 
+            round 
+            dense 
+            :icon="$q.dark.isActive ? 'light_mode' : 'dark_mode'" 
+            class="q-mx-sm nav-btn"
+            @click="toggleTheme"
+          >
+             <q-tooltip>{{ $q.dark.isActive ? 'Switch to Light Mode' : 'Switch to Dark Mode' }}</q-tooltip>
+          </q-btn>
+
+          <div class="q-mx-sm h-20" :class="$q.dark.isActive ? 'bg-grey-7' : 'bg-grey-3'" style="width: 1px;"></div>
           <q-btn 
             unelevated
             rounded
             no-caps 
-            class="bg-black text-white btn-hover-effect"
+            :class="$q.dark.isActive ? 'bg-white text-dark' : 'bg-black text-white'"
+            class="btn-hover-effect"
             label="Admin Login" 
             to="/login" 
           />
@@ -55,6 +61,7 @@
       </q-toolbar>
     </q-header>
 
+
     <!-- Mobile Drawer -->
     <q-drawer
       v-model="leftDrawerOpen"
@@ -62,7 +69,7 @@
       overlay
       side="right"
       behavior="mobile"
-      class="bg-white"
+      :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : 'bg-white text-dark'"
     >
       <div class="column full-height">
         <div class="q-pa-md row items-center justify-between">
@@ -70,9 +77,9 @@
            <q-btn flat round dense icon="close" @click="toggleLeftDrawer" />
         </div>
         
-        <q-separator />
+        <q-separator :color="$q.dark.isActive ? 'grey-8' : 'grey-3'" />
 
-        <q-list padding class="text-grey-9 q-mt-md">
+        <q-list padding :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'" class="q-mt-md">
           <q-item clickable v-ripple to="/" class="rounded-borders q-mx-md q-mb-sm custom-active-item">
             <q-item-section avatar>
               <q-icon name="home" />
@@ -115,7 +122,8 @@
         <div class="q-pa-md">
           <q-btn 
             unelevated 
-            class="full-width bg-black text-white q-py-sm rounded-borders" 
+            class="full-width q-py-sm rounded-borders" 
+            :class="$q.dark.isActive ? 'bg-white text-dark' : 'bg-black text-white'"
             label="Admin Login" 
             to="/login" 
             icon="admin_panel_settings"
@@ -132,12 +140,23 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useQuasar } from 'quasar'
 
 const leftDrawerOpen = ref(false)
+const $q = useQuasar()
 
+// Set default dark mode (optional, let's default to dark as requested 'fullsite ekama e theme ekata')
+// But better to check storage or default to dark.
+if ($q.dark.isActive === false) {
+  $q.dark.set(true)
+}
 
 function toggleLeftDrawer () {
   leftDrawerOpen.value = !leftDrawerOpen.value
+}
+
+function toggleTheme() {
+  $q.dark.toggle()
 }
 </script>
 
@@ -146,18 +165,19 @@ function toggleLeftDrawer () {
   font-family: 'Inter', 'Roboto', sans-serif;
 }
 
-/* Glass Header */
-.glass-header {
-  background: rgba(255, 255, 255, 0.85);
+/* Glass Header Dark */
+.glass-header-dark {
+  background: rgba(15, 23, 42, 0.85); /* Slate 900 with opacity */
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
 }
 
 .brand-text {
-  background: linear-gradient(135deg, #111827 0%, #4b5563 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -0.5px;
 }
@@ -167,19 +187,25 @@ function toggleLeftDrawer () {
 }
 
 .nav-btn {
-  color: #4b5563; /* Gray-700 */
+  color: #94a3b8; /* Slate-400 */
   transition: all 0.2s ease;
 }
 
 .nav-btn:hover {
-  color: #111827; /* Gray-900 */
-  background: rgba(0, 0, 0, 0.03);
+  color: inherit;
+  opacity: 0.8;
+  background: rgba(128, 128, 128, 0.1);
 }
 
 .nav-btn.q-router-link-active {
-  color: #4f46e5; /* Primary Indigo */
-  background: rgba(79, 70, 229, 0.08);
+  color: #818cf8; /* Indigo-400 */
+  background: rgba(99, 102, 241, 0.15);
   font-weight: 600;
+}
+/* Light mode specific override for active state contrast if needed */
+.body--light .nav-btn.q-router-link-active {
+  color: #4f46e5;
+  background: rgba(79, 70, 229, 0.08);
 }
 
 .btn-hover-effect {
@@ -199,8 +225,8 @@ function toggleLeftDrawer () {
 }
 
 .custom-active-item.q-router-link-active {
-  background: #f3f4f6;
-  color: #4f46e5;
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
   font-weight: 600;
 }
 </style>

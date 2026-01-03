@@ -1,6 +1,6 @@
 <template>
-  <q-page class="bg-grey-1 font-inter">
-    <div class="q-py-lg bg-gradient-primary text-white q-mb-lg shadow-2">
+  <q-page class="font-inter" :class="$q.dark.isActive ? 'bg-blue-grey-10 text-white' : 'bg-grey-1'">
+    <div class="q-py-lg text-white q-mb-lg shadow-2" :class="$q.dark.isActive ? 'bg-blue-grey-9' : 'bg-gradient-primary'">
        <div class="container q-mx-auto q-px-md">
           <div class="row items-center justify-between">
             <div>
@@ -21,7 +21,7 @@
     </div>
 
     <div class="container q-mx-auto q-px-md q-pb-xl">
-      <q-card class="shadow-soft border-radius-lg bg-white overflow-hidden">
+      <q-card class="shadow-soft border-radius-lg overflow-hidden" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white border-dark-mode' : 'bg-white'">
         <q-card-section class="q-pa-none">
           <q-table
             :rows="transactionStore.allTransactions"
@@ -30,28 +30,29 @@
             flat
             :pagination="{ rowsPerPage: 20 }"
             class="modern-table"
+            :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : ''"
           >
             <template v-slot:header="props">
               <q-tr :props="props">
-                <q-th v-for="col in props.cols" :key="col.name" :props="props" class="text-grey-8 text-weight-bold bg-grey-1">
+                <q-th v-for="col in props.cols" :key="col.name" :props="props" class="text-weight-bold" :class="$q.dark.isActive ? 'bg-blue-grey-10 text-grey-4' : 'text-grey-8 bg-grey-1'">
                   {{ col.label }}
                 </q-th>
               </q-tr>
             </template>
 
             <template v-slot:body="props">
-              <q-tr :props="props" class="hover-bg-grey transition-base">
+              <q-tr :props="props" class="transition-base" :class="$q.dark.isActive ? 'hover-bg-dark' : 'hover-bg-grey'">
                 <q-td key="date" :props="props">
-                   <div class="text-weight-medium text-grey-9">{{ props.row.date }}</div>
+                   <div class="text-weight-medium" :class="$q.dark.isActive ? 'text-white' : 'text-grey-9'">{{ props.row.date }}</div>
                 </q-td>
                 <q-td key="description" :props="props">
                    <div class="text-weight-bold">{{ props.row.description }}</div>
-                   <div class="text-caption text-grey-6" v-if="props.row.category">{{ props.row.category }}</div>
+                   <div class="text-caption" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-6'" v-if="props.row.category">{{ props.row.category }}</div>
                 </q-td>
                 <q-td key="type" :props="props">
                   <div 
                     class="badge-pill" 
-                    :class="props.row.type === 'Credit' ? 'bg-green-1 text-green-8' : 'bg-red-1 text-red-8'"
+                    :class="props.row.type === 'Credit' ? ($q.dark.isActive ? 'bg-green-9 text-green-1' : 'bg-green-1 text-green-8') : ($q.dark.isActive ? 'bg-red-9 text-red-1' : 'bg-red-1 text-red-8')"
                   >
                     <q-icon :name="props.row.type === 'Credit' ? 'arrow_downward' : 'arrow_upward'" size="xs" class="q-mr-xs" />
                     {{ props.row.type === 'Credit' ? 'Income' : 'Expense' }}
@@ -71,14 +72,14 @@
                      dense 
                      no-caps 
                      size="sm"
-                     class="bg-blue-1 text-blue-8"
+                     :class="$q.dark.isActive ? 'bg-blue-grey-8 text-blue-2' : 'bg-blue-1 text-blue-8'"
                      @click="viewDocument(props.row)"
                    />
-                   <span v-else class="text-grey-4 text-caption italic">No document</span>
+                   <span v-else class="text-caption italic" :class="$q.dark.isActive ? 'text-grey-6' : 'text-grey-4'">No document</span>
                 </q-td>
                 <q-td key="actions" :props="props">
                   <div v-if="userStore.isAdmin && route.query.mode === 'admin' && !props.row.isAggregate" class="q-gutter-sm">
-                     <q-btn flat round dense icon="edit" size="sm" class="bg-grey-2 text-grey-8" @click="editTx(props.row)" />
+                     <q-btn flat round dense icon="edit" size="sm" :class="$q.dark.isActive ? 'bg-grey-8 text-white' : 'bg-grey-2 text-grey-8'" @click="editTx(props.row)" />
                      <q-btn flat round dense icon="delete" size="sm" class="bg-red-1 text-negative" @click="deleteTx(props.row.id)" />
                   </div>
                 </q-td>
@@ -92,7 +93,7 @@
     <!-- Transaction Dialog (For Admin Edits) -->
     <q-dialog v-model="txDialog" transition-show="scale" transition-hide="scale">
       <q-card style="width: 500px; max-width: 90vw;" class="border-radius-lg">
-        <q-card-section class="bg-primary text-white">
+        <q-card-section class="text-white" :class="$q.dark.isActive ? 'bg-blue-grey-9' : 'bg-primary'">
           <div class="text-h6">Edit Transaction</div>
         </q-card-section>
 
@@ -113,8 +114,8 @@
            </q-file>
         </q-card-section>
         
-        <q-card-actions align="right" class="q-pa-md bg-grey-1">
-          <q-btn flat label="Cancel" color="grey" v-close-popup />
+        <q-card-actions align="right" class="q-pa-md" :class="$q.dark.isActive ? 'bg-blue-grey-10' : 'bg-grey-1'">
+          <q-btn flat label="Cancel" :color="$q.dark.isActive ? 'white' : 'grey'" v-close-popup />
           <q-btn unelevated label="Save Changes" color="primary" @click="saveTx" />
         </q-card-actions>
       </q-card>

@@ -1,5 +1,5 @@
 <template>
-  <q-page class="bg-grey-1 text-black font-inter">
+  <q-page :class="$q.dark.isActive ? 'bg-blue-grey-10 text-white' : 'bg-grey-1 text-black'" class="font-inter">
     <!-- Modern Notice Strip -->
     <div v-if="transactionStore.notice" class="bg-gradient-warning text-black q-py-sm q-px-md text-center text-subtitle2 text-weight-bold row items-center justify-center shadow-2">
        <q-icon name="campaign" size="xs" class="q-mr-sm" />
@@ -64,59 +64,59 @@
     <div class="container q-mx-auto q-px-md relative-position" style="margin-top: -80px; z-index: 3;">
        <div class="row q-col-gutter-lg">
           <div class="col-12 col-md-3 col-sm-6 animate-fade-up delay-200">
-             <q-card class="stat-card bg-white text-black shadow-3 full-height border-radius-lg">
+             <q-card class="stat-card shadow-3 full-height border-radius-lg" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white border-dark-mode' : 'bg-white text-black'">
                <q-card-section class="q-pa-lg">
                  <div class="row items-center justify-between q-mb-md">
-                    <div class="icon-box bg-blue-1 text-primary">
+                    <div class="icon-box" :class="$q.dark.isActive ? 'bg-white-10 text-blue-3' : 'bg-blue-1 text-primary'">
                        <q-icon name="account_balance_wallet" size="sm" />
                     </div>
                     <!-- Sparkline placeholder or trend icon -->
                     <q-icon name="trending_up" color="positive" />
                  </div>
-                 <div class="text-caption text-grey-7 text-uppercase text-weight-bold ls-1">Fund Balance</div>
-                 <div class="text-h5 text-weight-bolder q-mt-xs text-primary">{{ totalFundsFormatted }}</div>
+                 <div class="text-caption text-uppercase text-weight-bold ls-1" :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-7'">Fund Balance</div>
+                 <div class="text-h5 text-weight-bolder q-mt-xs" :class="$q.dark.isActive ? 'text-blue-3' : 'text-primary'">{{ totalFundsFormatted }}</div>
                </q-card-section>
              </q-card>
           </div>
           
           <div class="col-12 col-md-3 col-sm-6 animate-fade-up delay-300">
-             <q-card class="stat-card bg-white text-black shadow-3 full-height border-radius-lg">
+             <q-card class="stat-card shadow-3 full-height border-radius-lg" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white border-dark-mode' : 'bg-white text-black'">
                <q-card-section class="q-pa-lg">
                  <div class="row items-center justify-between q-mb-md">
-                    <div class="icon-box bg-green-1 text-green-7">
+                    <div class="icon-box" :class="$q.dark.isActive ? 'bg-white-10 text-green-4' : 'bg-green-1 text-green-7'">
                        <q-icon name="savings" size="sm" />
                     </div>
                  </div>
-                 <div class="text-caption text-grey-7 text-uppercase text-weight-bold ls-1">Total Collected</div>
-                 <div class="text-h5 text-weight-bolder q-mt-xs text-green-8">{{ totalCollectedFormatted }}</div>
+                 <div class="text-caption text-uppercase text-weight-bold ls-1" :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-7'">Total Collected</div>
+                 <div class="text-h5 text-weight-bolder q-mt-xs" :class="$q.dark.isActive ? 'text-green-4' : 'text-green-8'">{{ totalCollectedFormatted }}</div>
                </q-card-section>
              </q-card>
           </div>
 
           <div class="col-12 col-md-3 col-sm-6 animate-fade-up delay-400">
-             <q-card class="stat-card bg-white text-black shadow-3 full-height border-radius-lg">
+             <q-card class="stat-card shadow-3 full-height border-radius-lg" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white border-dark-mode' : 'bg-white text-black'">
                <q-card-section class="q-pa-lg">
                  <div class="row items-center justify-between q-mb-md">
-                    <div class="icon-box bg-red-1 text-red-7">
+                    <div class="icon-box" :class="$q.dark.isActive ? 'bg-white-10 text-red-4' : 'bg-red-1 text-red-7'">
                        <q-icon name="payments" size="sm" />
                     </div>
                  </div>
-                 <div class="text-caption text-grey-7 text-uppercase text-weight-bold ls-1">Total Spent</div>
-                 <div class="text-h5 text-weight-bolder q-mt-xs text-red-8">{{ totalSpentFormatted }}</div>
+                 <div class="text-caption text-uppercase text-weight-bold ls-1" :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-7'">Total Spent</div>
+                 <div class="text-h5 text-weight-bolder q-mt-xs" :class="$q.dark.isActive ? 'text-red-4' : 'text-red-8'">{{ totalSpentFormatted }}</div>
                </q-card-section>
              </q-card>
           </div>
 
           <div class="col-12 col-md-3 col-sm-6 animate-fade-up delay-500">
-             <q-card class="stat-card bg-white text-black shadow-3 full-height border-radius-lg">
+             <q-card class="stat-card shadow-3 full-height border-radius-lg" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white border-dark-mode' : 'bg-white text-black'">
                <q-card-section class="q-pa-lg">
                  <div class="row items-center justify-between q-mb-md">
-                    <div class="icon-box bg-orange-1 text-orange-8">
+                    <div class="icon-box" :class="$q.dark.isActive ? 'bg-white-10 text-orange-4' : 'bg-orange-1 text-orange-8'">
                        <q-icon name="groups" size="sm" />
                     </div>
-                    <div class="text-caption text-orange-8 bg-orange-1 q-px-sm rounded-borders text-weight-bold">{{ participationRate }}% Active</div>
+                    <div class="text-caption q-px-sm rounded-borders text-weight-bold" :class="$q.dark.isActive ? 'text-orange-2 bg-white-10' : 'text-orange-8 bg-orange-1'">{{ participationRate }}% Active</div>
                  </div>
-                 <div class="text-caption text-grey-7 text-uppercase text-weight-bold ls-1">Activity</div>
+                 <div class="text-caption text-uppercase text-weight-bold ls-1" :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-7'">Activity</div>
                  <div class="text-h5 text-weight-bolder q-mt-xs">{{ activeStudentsCount }} / {{ totalStudentsCount }}</div>
                </q-card-section>
              </q-card>
@@ -125,13 +125,13 @@
     </div>
 
     <!-- Dashboard Main Content -->
-    <div class="q-py-xl bg-grey-1">
+    <div class="q-py-xl" :class="$q.dark.isActive ? 'bg-blue-grey-10' : 'bg-grey-1'">
       <div class="container q-mx-auto q-px-md">
         
         <div class="row items-center q-mb-xl">
           <div class="col-12 text-center">
-            <h2 class="text-h3 text-weight-bolder q-mb-sm text-primary">Live Dashboard</h2>
-            <div class="text-subtitle1 text-grey-7" style="max-width: 600px; margin: 0 auto;">
+            <h2 class="text-h3 text-weight-bolder q-mb-sm" :class="$q.dark.isActive ? 'text-gradient-light' : 'text-primary'">Live Dashboard</h2>
+            <div class="text-subtitle1" :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-7'" style="max-width: 600px; margin: 0 auto;">
               Transparency is our priority. Monitor real-time fund flow and growth.
             </div>
             <div class="h-1 w-20 bg-primary q-mx-auto q-mt-md rounded-borders"></div>
@@ -141,9 +141,9 @@
         <div class="row q-col-gutter-lg">
           <!-- Recent Transactions Feed -->
            <div class="col-12 col-md-5">
-            <q-card class="bg-white shadow-soft full-height border-radius-lg overflow-hidden">
-              <q-card-section class="q-pa-lg row items-center justify-between bg-grey-1 border-bottom">
-                 <div class="text-h6 text-weight-bold text-blue-grey-9">Recent Activity</div>
+            <q-card class="shadow-soft full-height border-radius-lg overflow-hidden" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white border-dark-mode' : 'bg-white text-black'">
+              <q-card-section class="q-pa-lg row items-center justify-between" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-grey-1 border-bottom'">
+                 <div class="text-h6 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-blue-grey-9'">Recent Activity</div>
                  <q-btn flat dense no-caps color="primary" label="View All" icon-right="arrow_forward" to="/history" class="text-weight-bold" />
               </q-card-section>
               
@@ -153,15 +153,15 @@
                    <div>No transactions recorded yet.</div>
                  </div>
                  <q-list separator v-else>
-                    <q-item v-for="tx in transactionStore.allTransactions.slice(0, 5)" :key="tx.id" class="q-py-md hover-bg-grey transition-base">
+                    <q-item v-for="tx in transactionStore.allTransactions.slice(0, 5)" :key="tx.id" class="q-py-md hover-bg-grey transition-base" :class="$q.dark.isActive ? 'hover-bg-dark' : 'hover-bg-grey'">
                        <q-item-section avatar>
-                          <div class="avatar-icon flex flex-center" :class="tx.type === 'Credit' ? 'bg-green-1 text-green-7' : 'bg-red-1 text-red-7'">
+                          <div class="avatar-icon flex flex-center" :class="tx.type === 'Credit' ? ($q.dark.isActive ? 'bg-green-9 text-green-1' : 'bg-green-1 text-green-7') : ($q.dark.isActive ? 'bg-red-9 text-red-1' : 'bg-red-1 text-red-7')">
                              <q-icon :name="tx.type === 'Credit' ? 'arrow_downward' : 'arrow_upward'" size="xs" />
                           </div>
                        </q-item-section>
                        <q-item-section>
-                          <q-item-label class="text-weight-bold text-subtitle2">{{ tx.description }}</q-item-label>
-                          <q-item-label caption class="text-grey-6">{{ tx.date }}</q-item-label>
+                          <q-item-label class="text-weight-bold text-subtitle2" :class="$q.dark.isActive ? 'text-white' : 'text-dark'">{{ tx.description }}</q-item-label>
+                          <q-item-label caption class="text-grey-5" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-6'">{{ tx.date }}</q-item-label>
                        </q-item-section>
                        <q-item-section side>
                           <div class="text-weight-bold" :class="tx.type === 'Credit' ? 'text-green-7' : 'text-red-7'">
@@ -176,9 +176,9 @@
 
           <!-- Growth Chart -->
           <div class="col-12 col-md-4">
-             <q-card class="bg-white shadow-soft full-height border-radius-lg overflow-hidden">
-              <q-card-section class="q-pa-lg border-bottom bg-grey-1">
-                <div class="text-h6 text-weight-bold text-blue-grey-9">Fund Growth</div>
+             <q-card class="shadow-soft full-height border-radius-lg overflow-hidden" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white border-dark-mode' : 'bg-white text-black'">
+              <q-card-section class="q-pa-lg border-bottom-dark" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-grey-1 border-bottom'">
+                <div class="text-h6 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-blue-grey-9'">Fund Growth</div>
               </q-card-section>
               <q-card-section class="q-pa-md relative-position">
                 <div style="height: 350px;">
@@ -325,9 +325,10 @@
 
 .border-bottom { border-bottom: 1px solid #f0f0f0; }
 
-.text-gradient {
-  background: linear-gradient(to right, #ffffff, #c7d2fe);
+.text-gradient-light {
+  background: linear-gradient(to right, #ffffff, #94a3b8);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -366,9 +367,14 @@
   border-radius: 50%;
 }
 
-.hover-bg-grey:hover {
-  background-color: #f9fafb;
+.hover-bg-dark:hover {
+  background-color: rgba(255, 255, 255, 0.05); /* Slight light on hover */
 }
+.hover-bg-grey:hover {
+  background-color: #f5f5f5; /* Slight light on hover */
+}
+.border-bottom-dark { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.border-dark-mode { border: 1px solid rgba(255, 255, 255, 0.05); }
 
 .transition-base {
   transition: all 0.2s;
@@ -381,13 +387,14 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { date } from 'quasar'
+import { date, useQuasar } from 'quasar'
 import { useTransactionStore } from 'stores/transaction-store'
 import { Line } from 'vue-chartjs'
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from 'chart.js'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler)
 
+const $q = useQuasar()
 const transactionStore = useTransactionStore()
 
 const students = computed(() => transactionStore.students)
@@ -466,39 +473,43 @@ const chartData = computed(() => {
     labels: months,
     datasets: [{
       label: 'Total Fund Balance',
-      backgroundColor: 'rgba(0, 0, 0, 0.1)',
-      borderColor: '#000000',
+      backgroundColor: $q.dark.isActive ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+      borderColor: $q.dark.isActive ? '#ffffff' : '#000000',
       data: dataPoints,
       fill: true,
       tension: 0.4,
       pointRadius: 3,
-      pointBackgroundColor: '#000000'
+      pointBackgroundColor: $q.dark.isActive ? '#ffffff' : '#000000'
     }]
   }
 })
 
-const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { display: false },
-    tooltip: { 
-       mode: 'index', 
-       intersect: false,
-       callbacks: {
-         label: (context) => ' LKR ' + context.parsed.y.toLocaleString()
-       }
-    }
-  },
-  scales: {
-    x: { grid: { display: false } },
-    y: { 
-       grid: { color: '#f0f0f0' },
-       ticks: { callback: (val) => val >= 1000 ? (val/1000) + 'k' : val }
+const chartOptions = computed(() => {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+       tooltip: { 
+         mode: 'index', 
+         intersect: false,
+         callbacks: {
+           label: (context) => ' LKR ' + context.parsed.y.toLocaleString()
+         }
+      }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: $q.dark.isActive ? '#cbd5e1' : '#64748b' } },
+      y: { 
+         grid: { color: $q.dark.isActive ? 'rgba(255, 255, 255, 0.1)' : '#f0f0f0' },
+         ticks: { 
+           color: $q.dark.isActive ? '#cbd5e1' : '#64748b', 
+           callback: (val) => val >= 1000 ? (val/1000) + 'k' : val 
+         }
+      }
     }
   }
-}
-
+})
 
 
 onMounted(() => {

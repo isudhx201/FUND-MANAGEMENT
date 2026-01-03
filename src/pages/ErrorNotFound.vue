@@ -1,5 +1,5 @@
 <template>
-  <div class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center">
+  <div class="fullscreen text-center q-pa-md flex flex-center" :class="$q.dark.isActive ? 'bg-blue-grey-10 text-white' : 'bg-blue text-white'">
     <div>
       <div style="font-size: 30vh">404</div>
 
@@ -8,7 +8,7 @@
       <q-btn
         class="q-mt-xl"
         color="white"
-        text-color="blue"
+        :text-color="$q.dark.isActive ? 'blue-grey-10' : 'blue'"
         unelevated
         to="/"
         label="Go Home"
@@ -19,5 +19,5 @@
 </template>
 
 <script setup>
-//
+// Use global q.dark
 </script>
