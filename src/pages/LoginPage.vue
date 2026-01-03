@@ -18,7 +18,7 @@
         <q-input 
           outlined 
           v-model="username" 
-          label="Username" 
+          label="Email / Username" 
           class="q-mb-md" 
           :color="$q.dark.isActive ? 'blue-3' : 'indigo'"
           :bg-color="$q.dark.isActive ? 'blue-grey-10' : 'white'"
@@ -93,10 +93,11 @@ const userStore = useUserStore()
 const $q = useQuasar()
 
 async function handleLogin() {
-  if (await userStore.login(username.value, password.value)) {
+  const result = await userStore.login(username.value, password.value)
+  if (result.success) {
     router.push('/admin/dashboard')
   } else {
-    error.value = 'Invalid credentials'
+    error.value = result.error || 'Invalid credentials'
   }
 }
 </script>

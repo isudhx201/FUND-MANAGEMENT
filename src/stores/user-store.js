@@ -6,111 +6,109 @@ export const useUserStore = defineStore('user', {
     isAdmin: false,
     isAuthenticated: false,
     currentUserRole: null,
-    username: 'admin', 
-    password: 'admin123',
+    userEmail: null,
     isLoaded: false
   }),
   actions: {
     async checkAuth() {
-      // 1. Fetch live credentials from Supabase first
-      await this.fetchCredentials()
-
-      // 2. Check local session
-      const auth = localStorage.getItem('is_authenticated')
-      const role = localStorage.getItem('user_role')
-      if (auth === 'true') {
-        this.isAuthenticated = true
-        this.isAdmin = true
-        this.currentUserRole = role
-      }
-    },
-
-    async fetchCredentials() {
-      try {
-        const { data, error } = await supabase
-          .from('system_settings')
-          .select('key, value')
-          .in('key', ['admin_username', 'admin_password'])
-        
-        if (error) throw error
-        
-        if (data) {
-          data.forEach(item => {
-            if (item.key === 'admin_username') this.username = item.value
-            if (item.key === 'admin_password') this.password = item.value
-          })
-        }
-        this.isLoaded = true
-        return true
-      } catch (err) {
-        console.error('Error fetching credentials:', err)
-        return false
-      }
-    },
-
-    async login(inputUsername, inputPassword) {
-      // Re-fetch to be absolutely sure we have the latest (in case changed recently on another dev)
-      await this.fetchCredentials()
-
-      const isSuper = inputUsername === 'superadmin' && inputPassword === 'superadmin123'
-      const isStandard = inputUsername === this.username && inputPassword === this.password
+      // 1. Check Supabase Session
+      const { data: { session } } = await supabase.auth.getSession()
       
-      if (isSuper || isStandard) {
+      if (session) {
         this.isAuthenticated = true
         this.isAdmin = true
-        this.currentUserRole = isSuper ? 'superadmin' : 'admin'
-        
-        // Persist session locally
-        localStorage.setItem('is_authenticated', 'true')
-        localStorage.setItem('user_role', this.currentUserRole)
-        return true
+        this.currentUserRole = 'admin'
+        this.userEmail = session.user.email
+      } else {
+        // Fallback check for local superadmin session (persisted in localStorage)
+        const role = localStorage.getItem('user_role')
+        const isAuth = localStorage.getItem('is_authenticated')
+        if (isAuth === 'true' && role === 'superadmin') {
+          this.isAuthenticated = true
+          this.isAdmin = true
+          this.currentUserRole = 'superadmin'
+        }
       }
-      return false
+      this.isLoaded = true
+    },
+
+    async login(emailOrUsername, password) {
+      // 1. Hardcoded Superadmin Bypass
+      if (emailOrUsername === 'superadmin' && password === 'superadmin123') {
+        this.isAuthenticated = true
+        this.isAdmin = true
+        this.currentUserRole = 'superadmin'
+        localStorage.setItem('is_authenticated', 'true')
+        localStorage.setItem('user_role', 'superadmin')
+        return { success: true }
+      }
+
+      // 2. Standard Admin via Supabase Auth (Email)
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: emailOrUsername,
+        password: password
+      })
+
+      if (error) {
+        console.error('Login error:', error.message)
+        return { success: false, error: error.message }
+      }
+
+      if (data.session) {
+        this.isAuthenticated = true
+        this.isAdmin = true
+        this.currentUserRole = 'admin'
+        this.userEmail = data.user.email
+        // Persistent session is handled by Supabase client automatically,
+        // but we'll set these for compatibility with existing route guards if any.
+        localStorage.setItem('is_authenticated', 'true')
+        localStorage.setItem('user_role', 'admin')
+        return { success: true }
+      }
+
+      return { success: false, error: 'Unknown login error' }
     },
 
     async logout() {
+      await supabase.auth.signOut()
       this.isAuthenticated = false
       this.isAdmin = false
       this.currentUserRole = null
+      this.userEmail = null
       
-      // Clear session
       localStorage.removeItem('is_authenticated')
       localStorage.removeItem('user_role')
     },
 
-    // Requires validation of current credentials to change them
-    async updateCredentials(currentUsername, currentPassword, newUsername, newPassword) {
-      if (!newUsername || !newPassword) return false
+    async updateCredentials(currentPassword, newEmail, newPassword) {
+      // Update currently logged in Supabase user (Standard Admin)
+      const updates = {}
+      if (newEmail) updates.email = newEmail
+      if (newPassword) updates.password = newPassword
 
-      const isSuperAuth = currentUsername === 'superadmin' && currentPassword === 'superadmin123'
-      const isStandardAuth = currentUsername === this.username && currentPassword === this.password
-
-      if (isSuperAuth || isStandardAuth) {
-        if (isStandardAuth && newUsername === 'superadmin') return false 
-
-        const success = await this._setStandardCredentials(newUsername, newPassword)
-        return success
-      }
-
-      return false
-    },
-
-    async _setStandardCredentials(user, pass) {
-      const { error } = await supabase
-        .from('system_settings')
-        .upsert([
-          { key: 'admin_username', value: user },
-          { key: 'admin_password', value: pass }
-        ])
+      const { error } = await supabase.auth.updateUser(updates)
 
       if (error) {
-        console.error('Error updating credentials in Supabase:', error)
-        return false
+        console.error('Update credentials error:', error.message)
+        return { success: false, error: error.message }
       }
 
-      this.username = user
-      this.password = pass
-      return true
+      if (newEmail) this.userEmail = newEmail
+      return { success: true }
+    },
+
+    async registerAdmin(email, password) {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      })
+
+      if (error) {
+        console.error('Registration error:', error.message)
+        return { success: false, error: error.message }
+      }
+
+      return { success: true, data }
     }
   }
 })

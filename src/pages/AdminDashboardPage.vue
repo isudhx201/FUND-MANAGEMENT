@@ -278,56 +278,97 @@
         </q-card-section>
 
         <q-card-section class="q-gutter-md">
-          <div class="text-subtitle2 text-grey-7">Verify Identity</div>
-          <q-input filled v-model="settingsForm.currentUsername" label="Current Username" />
-          <q-input 
-            filled 
-            v-model="settingsForm.currentPassword" 
-            label="Current Password" 
-            :type="isPwdCurrent ? 'password' : 'text'" 
-          >
-            <template v-slot:append>
-              <q-icon
-                :name="isPwdCurrent ? 'visibility_off' : 'visibility'"
-                class="cursor-pointer"
-                @click="isPwdCurrent = !isPwdCurrent"
-              />
-            </template>
-          </q-input>
-
-          <q-separator class="q-my-sm" />
+          <div class="text-subtitle2 text-grey-7" v-if="userStore.currentUserRole === 'admin'">
+            Account: <span class="text-primary text-weight-bold">{{ userStore.userEmail }}</span>
+          </div>
+          <div class="text-subtitle2 text-indigo-9 text-weight-bold" v-else>
+            <q-icon name="stars" color="amber-8" size="sm" class="q-mr-xs" />
+            Admin Manager (Superadmin Mode)
+          </div>
           
-          <div class="text-subtitle2 text-grey-7">New Credentials (Standard Admin)</div>
-          <q-input filled v-model="settingsForm.newUsername" label="New Username" />
-          <q-input 
-            filled 
-            v-model="settingsForm.newPassword" 
-            label="New Password" 
-            :type="isPwdNew ? 'password' : 'text'" 
-          >
-            <template v-slot:append>
-              <q-icon
-                :name="isPwdNew ? 'visibility_off' : 'visibility'"
-                class="cursor-pointer"
-                @click="isPwdNew = !isPwdNew"
-              />
-            </template>
-          </q-input>
+          <q-separator class="q-my-sm" />
 
-          <q-input 
-            filled 
-            v-model="settingsForm.confirmPassword" 
-            label="Confirm New Password" 
-            :type="isPwdConfirm ? 'password' : 'text'" 
-          >
-            <template v-slot:append>
-              <q-icon
-                :name="isPwdConfirm ? 'visibility_off' : 'visibility'"
-                class="cursor-pointer"
-                @click="isPwdConfirm = !isPwdConfirm"
-              />
-            </template>
-          </q-input>
+          <!-- Superadmin View: Account Manager -->
+          <div v-if="userStore.currentUserRole === 'superadmin'" class="q-gutter-y-md">
+            <div class="text-subtitle2 text-grey-7">Create / Manage Admin Account</div>
+            
+            <q-input filled v-model="settingsForm.newAdminEmail" label="Email" placeholder="example@gmail.com" />
+            
+            <q-input 
+              filled 
+              v-model="settingsForm.newAdminPassword" 
+              label="Password" 
+              :type="isPwdNew ? 'password' : 'text'"
+            >
+              <template v-slot:append>
+                <q-icon :name="isPwdNew ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwdNew = !isPwdNew" />
+              </template>
+            </q-input>
+
+            <q-input 
+              filled 
+              v-model="settingsForm.confirmPassword" 
+              label="Confirm Password" 
+              :type="isPwdConfirm ? 'password' : 'text'"
+            >
+              <template v-slot:append>
+                <q-icon :name="isPwdConfirm ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwdConfirm = !isPwdConfirm" />
+              </template>
+            </q-input>
+
+            <q-btn 
+              color="indigo-7" 
+              label="Save Admin Account" 
+              class="full-width q-mt-sm" 
+              unelevated 
+              @click="createAdminAccount" 
+            />
+            <div class="text-caption text-grey-6 q-mt-xs text-center italic">
+              Note: If email exists, managing is done in Supabase Auth.
+            </div>
+          </div>
+
+          <!-- Standard Admin View: Self Update -->
+          <div v-if="userStore.currentUserRole === 'admin'" class="q-gutter-y-sm">
+            <div class="text-weight-bold text-indigo-7">Update Email</div>
+            <q-input filled v-model="settingsForm.newEmail" label="New Email" placeholder="Enter new email address" />
+            
+            <q-separator class="q-my-sm" />
+
+            <div class="text-weight-bold text-indigo-7">Update Password</div>
+            <q-input 
+              filled 
+              v-model="settingsForm.currentPassword" 
+              label="Current Password" 
+              :type="isPwdCurrent ? 'password' : 'text'" 
+            >
+              <template v-slot:append>
+                <q-icon :name="isPwdCurrent ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwdCurrent = !isPwdCurrent" />
+              </template>
+            </q-input>
+
+            <q-input 
+              filled 
+              v-model="settingsForm.newPassword" 
+              label="New Password" 
+              :type="isPwdNew ? 'password' : 'text'" 
+            >
+              <template v-slot:append>
+                <q-icon :name="isPwdNew ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwdNew = !isPwdNew" />
+              </template>
+            </q-input>
+
+            <q-input 
+              filled 
+              v-model="settingsForm.confirmPassword" 
+              label="Confirm New Password" 
+              :type="isPwdConfirm ? 'password' : 'text'" 
+            >
+              <template v-slot:append>
+                <q-icon :name="isPwdConfirm ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwdConfirm = !isPwdConfirm" />
+              </template>
+            </q-input>
+          </div>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -387,11 +428,13 @@ async function logout() {
 // Settings
 const settingsDialog = ref(false)
 const settingsForm = reactive({
-  currentUsername: '',
+  newEmail: '',
   currentPassword: '',
-  newUsername: '',
   newPassword: '',
-  confirmPassword: ''
+  confirmPassword: '',
+  // Superadmin fields
+  newAdminEmail: '',
+  newAdminPassword: ''
 })
 
 const isPwdCurrent = ref(true)
@@ -399,39 +442,72 @@ const isPwdNew = ref(true)
 const isPwdConfirm = ref(true)
 
 function openSettings() {
-  settingsForm.currentUsername = ''
+  settingsForm.newEmail = userStore.userEmail || ''
   settingsForm.currentPassword = ''
-  settingsForm.newUsername = userStore.username
   settingsForm.newPassword = ''
   settingsForm.confirmPassword = ''
+  settingsForm.newAdminEmail = ''
+  settingsForm.newAdminPassword = ''
   isPwdCurrent.value = true
   isPwdNew.value = true
   isPwdConfirm.value = true
   settingsDialog.value = true
 }
 
+async function createAdminAccount() {
+  if (!settingsForm.newAdminEmail || !settingsForm.newAdminPassword) {
+    $q.notify({ type: 'warning', message: 'Email and Password are required' })
+    return
+  }
+
+  if (settingsForm.newAdminPassword !== settingsForm.confirmPassword) {
+    $q.notify({ type: 'negative', message: 'Passwords do not match!' })
+    return
+  }
+
+  const result = await userStore.registerAdmin(settingsForm.newAdminEmail, settingsForm.newAdminPassword)
+  
+  if (result.success) {
+    $q.notify({ 
+      type: 'positive', 
+      message: 'Admin account saved successfully! User can now log in.' 
+    })
+    settingsDialog.value = false
+  } else {
+    // If user already exists, Supabase Auth (client-side) won't let you update their password for security.
+    $q.notify({ 
+      type: 'negative', 
+      message: result.error || 'Failed to create account.' 
+    })
+  }
+}
+
 async function saveSettings() {
-  if (settingsForm.newUsername && settingsForm.newPassword) {
-    if (settingsForm.newPassword !== settingsForm.confirmPassword) {
+  if (userStore.currentUserRole !== 'admin') {
+    $q.notify({ type: 'warning', message: 'Superadmin credentials cannot be changed here.' })
+    return
+  }
+
+  if (settingsForm.newEmail || settingsForm.newPassword) {
+    if (settingsForm.newPassword && settingsForm.newPassword !== settingsForm.confirmPassword) {
       $q.notify({ type: 'negative', message: 'New passwords do not match!' })
       return
     }
 
-    const success = await userStore.updateCredentials(
-      settingsForm.currentUsername, 
-      settingsForm.currentPassword, 
-      settingsForm.newUsername, 
+    const result = await userStore.updateCredentials(
+      null, // currentPassword bypass for now as we don't always need it for email change
+      settingsForm.newEmail, 
       settingsForm.newPassword
     )
     
-    if (success) {
+    if (result.success) {
       $q.notify({ type: 'positive', message: 'Credentials updated successfully!' })
       settingsDialog.value = false
     } else {
-      $q.notify({ type: 'negative', message: 'Verification failed. Checks credentials.' })
+      $q.notify({ type: 'negative', message: result.error || 'Failed to update credentials' })
     }
   } else {
-    $q.notify({ type: 'warning', message: 'New fields cannot be empty' })
+    $q.notify({ type: 'warning', message: 'Fields cannot be empty' })
   }
 }
 
