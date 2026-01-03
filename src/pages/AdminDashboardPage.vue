@@ -1,39 +1,45 @@
 <template>
   <q-page class="font-inter" :class="$q.dark.isActive ? 'bg-blue-grey-10 text-white' : 'bg-indigo-1'">
     <!-- Header -->
-    <div class="row items-center justify-between q-mb-lg">
-      <div>
-        <h1 class="text-h4 text-weight-bold q-my-none" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">Admin Portal <span class="text-subtitle1 text-weight-regular vertical-middle q-ml-sm q-pl-sm" :class="$q.dark.isActive ? 'text-grey-4 border-left-dark' : 'text-indigo-4 border-left-indigo'">Dashboard</span></h1>
+    <div class="row items-center justify-between q-mb-lg q-gutter-y-md">
+      <div class="col-12 col-sm-auto">
+        <h1 class="text-h4 text-weight-bold q-my-none" :class="$q.dark.isActive ? 'text-white' : 'text-indigo-9'">Admin Portal <span class="text-subtitle1 text-weight-regular vertical-middle q-ml-sm q-pl-sm lt-sm" style="display: block; border-left: none; padding-left: 0;">Dashboard</span><span class="text-subtitle1 text-weight-regular vertical-middle q-ml-sm q-pl-sm gt-xs" :class="$q.dark.isActive ? 'text-grey-4 border-left-dark' : 'text-indigo-4 border-left-indigo'">Dashboard</span></h1>
         <div class="text-subtitle2 q-mt-xs" :class="$q.dark.isActive ? 'text-grey-4' : 'text-indigo-5'">Manage funds, notices, and verifying documents</div>
       </div>
-      <div class="q-gutter-sm">
+      <div class="col-12 col-sm-auto q-gutter-sm flex items-center">
         <q-btn 
-          label="Master History" 
+          label="History" 
           icon="history" 
           unelevated 
-          :class="$q.dark.isActive ? 'bg-blue-grey-8 text-white shadow-3' : 'bg-indigo-6 text-white shadow-3 hover-scale'"
+          dense
+          :class="$q.dark.isActive ? 'bg-blue-grey-8 text-white shadow-3' : 'bg-indigo-6 text-white shadow-3'"
           to="/history?mode=admin" 
           rounded 
+          class="q-px-md"
         />
         <q-btn 
-          label="Settings" 
           icon="settings" 
           unelevated 
+          dense
           :class="$q.dark.isActive ? 'bg-blue-grey-9 text-grey-3 border-dark' : 'bg-white text-indigo-9 border-indigo'"
           @click="openSettings" 
           rounded
-          no-caps 
-        />
+          class="q-px-sm"
+        >
+           <q-tooltip>Settings</q-tooltip>
+        </q-btn>
         <q-btn 
-          label="Logout" 
           icon="logout" 
           :color="$q.dark.isActive ? 'red-9' : 'red-1'" 
           :text-color="$q.dark.isActive ? 'red-1' : 'red-7'"
           unelevated
+          dense
           rounded
           @click="logout" 
-          no-caps 
-        />
+          class="q-px-sm"
+        >
+           <q-tooltip>Logout</q-tooltip>
+        </q-btn>
       </div>
     </div>
 
@@ -71,10 +77,14 @@
                  <div class="d-inline-block q-mr-sm q-pa-xs rounded-borders" :class="$q.dark.isActive ? 'bg-white-10' : 'bg-amber-1'"><q-icon name="bolt" :class="$q.dark.isActive ? 'text-amber-4' : 'text-amber-8'" /></div> Quick Actions
               </div>
            </q-card-section>
-           <q-card-section class="q-pa-md text-center row flex-center" style="min-height: 120px;">
-              <div class="q-gutter-md">
-                  <q-btn icon="add_circle" label="Add Income" color="green-6" unelevated rounded class="q-px-lg q-py-sm shadow-2 hover-scale" @click="openTxDialog('Credit')" />
-                  <q-btn icon="remove_circle" label="Add Expense" color="deep-orange-5" unelevated rounded class="q-px-lg q-py-sm shadow-2 hover-scale" @click="openTxDialog('Debit')" />
+           <q-card-section class="q-pa-md text-center flex flex-center" style="min-height: 120px;">
+              <div class="row q-col-gutter-sm full-width justify-center">
+                  <div class="col-12 col-sm-auto">
+                    <q-btn icon="add_circle" label="Add Income" color="green-6" unelevated rounded class="q-px-lg q-py-sm shadow-2 hover-scale full-width" @click="openTxDialog('Credit')" />
+                  </div>
+                  <div class="col-12 col-sm-auto">
+                    <q-btn icon="remove_circle" label="Add Expense" color="deep-orange-5" unelevated rounded class="q-px-lg q-py-sm shadow-2 hover-scale full-width" @click="openTxDialog('Debit')" />
+                  </div>
               </div>
            </q-card-section>
         </q-card>
@@ -119,6 +129,7 @@
               :loading="loading"
               virtual-scroll
               style="max-height: 500px;"
+              :grid="$q.screen.xs"
             >
               <template v-slot:header="props">
                 <q-tr :props="props">
@@ -156,6 +167,7 @@
                 flat
                 class="modern-table"
                 :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : ''"
+                :grid="$q.screen.xs"
               >
                   <template v-slot:header="props">
                     <q-tr :props="props">

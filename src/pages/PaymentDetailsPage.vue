@@ -3,21 +3,25 @@
     <!-- Header -->
     <div class="q-py-lg border-bottom q-mb-lg" :class="$q.dark.isActive ? 'bg-blue-grey-9 border-bottom-dark' : 'bg-white border-bottom'">
        <div class="container q-mx-auto q-px-md">
-          <div class="row items-center justify-between">
-            <div>
-              <h1 class="text-h4 text-weight-bold q-my-none" :class="$q.dark.isActive ? 'text-white' : 'text-primary'">Payment Details</h1>
-              <div class="text-subtitle2 q-mt-xs" :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-7'">Transparency Report - Student Contributions</div>
-            </div>
-            <q-btn 
-              label="Back to Home" 
-              icon="arrow_back" 
-              outline 
-              rounded
-              :color="$q.dark.isActive ? 'white' : 'primary'"
-              no-caps 
-              to="/" 
-            />
-          </div>
+           <div class="row items-center justify-between q-gutter-y-sm">
+             <div class="col-12 col-sm-auto">
+               <h1 class="text-h4 text-weight-bold q-my-none" :class="$q.dark.isActive ? 'text-white' : 'text-primary'">Payment Details</h1>
+               <div class="text-subtitle2 q-mt-xs" :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-7'">Transparency Report - Student Contributions</div>
+             </div>
+             <div class="col-12 col-sm-auto">
+               <q-btn 
+                 label="Back to Home" 
+                 icon="arrow_back" 
+                 outline 
+                 rounded
+                 dense
+                 :color="$q.dark.isActive ? 'white' : 'primary'"
+                 no-caps 
+                 to="/" 
+                 class="q-px-md"
+               />
+             </div>
+           </div>
        </div>
     </div>
 
@@ -25,14 +29,14 @@
       <q-card class="shadow-soft border-radius-lg overflow-hidden" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white border-dark-mode' : 'bg-white'">
         <!-- Modern Search Bar -->
         <q-card-section class="q-pa-md border-bottom" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-grey-1'">
-          <div class="row justify-between items-center">
-             <div class="text-h6 text-weight-bold">Batch 2026 List</div>
+          <div class="row justify-between items-center q-gutter-y-sm">
+             <div class="text-h6 text-weight-bold col-12 col-sm-auto">Batch 2026 List</div>
              <q-input 
                 v-model="filter" 
                 outlined 
                 dense 
                 placeholder="Search by Name or Reg No..." 
-                class="search-input"
+                class="search-input col-12 col-sm-auto"
                 :bg-color="$q.dark.isActive ? 'blue-grey-9' : 'white'"
                 :label-color="$q.dark.isActive ? 'grey-4' : 'grey-7'"
                 :input-class="$q.dark.isActive ? 'text-white' : ''"
@@ -57,6 +61,7 @@
             :pagination="{ rowsPerPage: 25 }"
             class="modern-table"
             :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : ''"
+            :grid="$q.screen.xs"
           >
              <template v-slot:header="props">
                 <q-tr :props="props">
@@ -187,6 +192,7 @@ onMounted(() => {
 }
 .search-input {
   width: 300px;
+  max-width: 100%;
 }
 .modern-table :deep(th) {
   font-size: 0.75rem;

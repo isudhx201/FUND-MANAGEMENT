@@ -182,6 +182,12 @@ function toggleTheme() {
   letter-spacing: -0.5px;
 }
 
+@media (max-width: 600px) {
+  .brand-text {
+    font-size: 1.1rem !important;
+  }
+}
+
 .bg-primary-gradient {
   background: linear-gradient(135deg, #4f46e5 0%, #818cf8 100%);
 }

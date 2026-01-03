@@ -27,15 +27,15 @@
       <div class="relative-position container q-mx-auto q-px-md full-height flex flex-center column text-center" style="z-index: 2;">
         
         <!-- Glass Card for Balance -->
-        <div class="glass-card q-pa-xl q-mb-xl animate-fade-up">
-           <div class="text-overline text-uppercase text-weight-bold q-mb-sm text-white opacity-80 ls-2">Total Current Fund</div>
+        <div class="glass-card q-pa-lg-xl q-pa-md q-mb-xl animate-fade-up" style="max-width: 95vw;">
+           <div class="text-overline text-uppercase text-weight-bold q-mb-sm text-white opacity-80 ls-2" style="font-size: 0.7rem;">Total Current Fund</div>
            <h1 class="text-h1 text-weight-bolder q-my-sm hero-balance text-gradient">
              {{ totalFundsFormatted }}
            </h1>
            <div class="text-caption text-grey-3 q-mt-md flex flex-center">
-             <div class="q-px-sm q-py-xs bg-white-10 rounded-borders row items-center">
+             <div class="q-px-sm q-py-xs bg-white-10 rounded-borders row items-center no-wrap">
                <q-icon name="update" class="q-mr-xs" size="xs" />
-               <span>Last Updated: {{ lastUpdated }}</span>
+               <span class="ellipsis">Last Updated: {{ lastUpdated }}</span>
              </div>
            </div>
         </div>
@@ -128,10 +128,10 @@
     <div class="q-py-xl" :class="$q.dark.isActive ? 'bg-blue-grey-10' : 'bg-grey-1'">
       <div class="container q-mx-auto q-px-md">
         
-        <div class="row items-center q-mb-xl">
+        <div class="row items-center q-mb-md q-mb-md-xl">
           <div class="col-12 text-center">
-            <h2 class="text-h3 text-weight-bolder q-mb-sm" :class="$q.dark.isActive ? 'text-gradient-light' : 'text-primary'">Live Dashboard</h2>
-            <div class="text-subtitle1" :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-7'" style="max-width: 600px; margin: 0 auto;">
+            <h2 class="text-h4 text-md-h3 text-weight-bolder q-mb-sm" :class="$q.dark.isActive ? 'text-gradient-light' : 'text-primary'">Live Dashboard</h2>
+            <div class="text-body2 text-md-subtitle1" :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-7'" style="max-width: 600px; margin: 0 auto;">
               Transparency is our priority. Monitor real-time fund flow and growth.
             </div>
             <div class="h-1 w-20 bg-primary q-mx-auto q-mt-md rounded-borders"></div>
@@ -181,7 +181,7 @@
                 <div class="text-h6 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-blue-grey-9'">Fund Growth</div>
               </q-card-section>
               <q-card-section class="q-pa-md relative-position">
-                <div style="height: 350px;">
+                <div class="chart-container">
                   <Line :data="chartData" :options="chartOptions" />
                 </div>
               </q-card-section>
@@ -383,6 +383,16 @@
 .h-1 { height: 4px; }
 .w-20 { width: 80px; }
 .line-height-relaxed { line-height: 1.6; }
+
+.chart-container {
+  height: 350px;
+}
+
+@media (max-width: 600px) {
+  .chart-container {
+    height: 250px;
+  }
+}
 </style>
 
 <script setup>

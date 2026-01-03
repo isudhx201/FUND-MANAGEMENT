@@ -35,8 +35,14 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   })
 
   // Navigation Guard
-  Router.beforeEach((to, from, next) => {
+  Router.beforeEach(async (to, from, next) => {
     const userStore = useUserStore()
+    
+    // Ensure auth state is loaded before checking requiresAuth
+    if (!userStore.isLoaded) {
+      await userStore.checkAuth()
+    }
+
     if (to.meta.requiresAuth && !userStore.isAuthenticated) {
       next('/login')
     } else {

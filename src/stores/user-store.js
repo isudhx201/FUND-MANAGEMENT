@@ -11,7 +11,25 @@ export const useUserStore = defineStore('user', {
   }),
   actions: {
     async checkAuth() {
-      // 1. Check Supabase Session
+      // 1. Listen for Auth State Changes
+      supabase.auth.onAuthStateChange((event, session) => {
+        if (session) {
+          this.isAuthenticated = true
+          this.isAdmin = true
+          this.currentUserRole = 'admin'
+          this.userEmail = session.user.email
+          localStorage.setItem('is_authenticated', 'true')
+          localStorage.setItem('user_role', 'admin')
+        } else if (localStorage.getItem('user_role') !== 'superadmin') {
+          // Only clear if not superadmin (since superadmin doesn't have a supabase session)
+          this.isAuthenticated = false
+          this.isAdmin = false
+          this.currentUserRole = null
+          this.userEmail = null
+        }
+      })
+
+      // 2. Initial Session Check
       const { data: { session } } = await supabase.auth.getSession()
       
       if (session) {

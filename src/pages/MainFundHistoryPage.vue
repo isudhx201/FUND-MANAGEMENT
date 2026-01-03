@@ -2,20 +2,23 @@
   <q-page class="font-inter" :class="$q.dark.isActive ? 'bg-blue-grey-10 text-white' : 'bg-grey-1'">
     <div class="q-py-lg text-white q-mb-lg shadow-2" :class="$q.dark.isActive ? 'bg-blue-grey-9' : 'bg-gradient-primary'">
        <div class="container q-mx-auto q-px-md">
-          <div class="row items-center justify-between">
-            <div>
+          <div class="row items-center justify-between q-gutter-y-sm">
+            <div class="col-12 col-sm-auto">
               <h1 class="text-h4 text-weight-bold q-my-none">Transaction History</h1>
               <div class="text-subtitle2 opacity-80 q-mt-xs">Detailed chronological record of all fund activities</div>
             </div>
-            <q-btn 
-              label="Back to Home" 
-              icon="arrow_back" 
-              flat 
-              dense
-              class="bg-white-20 text-white"
-              no-caps 
-              to="/" 
-            />
+            <div class="col-12 col-sm-auto">
+              <q-btn 
+                label="Back to Home" 
+                icon="arrow_back" 
+                flat 
+                dense
+                rounded
+                class="bg-white-20 text-white q-px-md"
+                no-caps 
+                to="/" 
+              />
+            </div>
           </div>
        </div>
     </div>
@@ -31,6 +34,7 @@
             :pagination="{ rowsPerPage: 20 }"
             class="modern-table"
             :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white' : ''"
+            :grid="$q.screen.xs"
           >
             <template v-slot:header="props">
               <q-tr :props="props">
@@ -63,20 +67,23 @@
                     {{ props.row.type === 'Credit' ? '+' : '-' }} LKR {{ props.row.amount.toLocaleString() }}
                   </div>
                 </q-td>
-                 <q-td key="proof" :props="props">
-                   <q-btn 
-                     v-if="props.row.proofName" 
-                     icon="description" 
-                     label="View Proof" 
-                     flat 
-                     dense 
-                     no-caps 
-                     size="sm"
-                     :class="$q.dark.isActive ? 'bg-blue-grey-8 text-blue-2' : 'bg-blue-1 text-blue-8'"
-                     @click="viewDocument(props.row)"
-                   />
-                   <span v-else class="text-caption italic" :class="$q.dark.isActive ? 'text-grey-6' : 'text-grey-4'">No document</span>
-                </q-td>
+                  <q-td key="proof" :props="props">
+                    <q-btn 
+                      v-if="props.row.proofName" 
+                      icon="description" 
+                      :label="$q.screen.gt.xs ? 'View Proof' : ''" 
+                      flat 
+                      dense 
+                      no-caps 
+                      size="sm"
+                      :class="$q.dark.isActive ? 'bg-blue-grey-8 text-blue-2' : 'bg-blue-1 text-blue-8'"
+                      @click="viewDocument(props.row)"
+                      class="q-px-sm"
+                    >
+                      <q-tooltip v-if="$q.screen.xs">View Proof</q-tooltip>
+                    </q-btn>
+                    <span v-else class="text-caption italic" :class="$q.dark.isActive ? 'text-grey-6' : 'text-grey-4'">No document</span>
+                 </q-td>
                 <q-td key="actions" :props="props">
                   <div v-if="userStore.isAdmin && route.query.mode === 'admin' && !props.row.isAggregate" class="q-gutter-sm">
                      <q-btn flat round dense icon="edit" size="sm" :class="$q.dark.isActive ? 'bg-grey-8 text-white' : 'bg-grey-2 text-grey-8'" @click="editTx(props.row)" />
