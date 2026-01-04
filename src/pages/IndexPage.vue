@@ -20,22 +20,15 @@
         </template>
       </q-img>
       
-      <!-- Gradient Overlay -->
+      <!-- Gradient Overlays & Mesh -->
+      <div class="absolute-full bg-mesh opacity-50" style="z-index: 0.5;"></div>
       <div class="absolute-full bg-gradient-overlay" style="z-index: 1;"></div>
 
       <!-- Hero Content -->
-      <div class="relative-position container q-mx-auto q-px-md full-height flex flex-center column text-center" style="z-index: 2;">
+      <div class="relative-position container q-mx-auto q-px-md full-height flex flex-center column text-center" style="z-index: 2; padding-bottom: 80px;">
         
-        <!-- Site Title & Hierarchy -->
-        <div class="animate-fade-up q-mb-xl">
-          <h1 class="text-h3 text-md-h2 text-weight-bolder text-white q-mb-xs">
-            Financial Transparency <span class="text-weight-regular opacity-80">Portal</span>
-          </h1>
-          <div class="text-subtitle1 text-md-h6 text-grey-3 text-weight-medium opacity-90 ls-1">
-            FBS 2023 Batch | University of Vavuniya
-          </div>
-        </div>
-        <div class="glass-card q-pa-lg-xl q-pa-md q-mb-xl animate-fade-up" style="max-width: 95vw;">
+        <!-- Focus on the Balance Card -->
+        <div class="glass-card q-pa-lg-xl q-pa-md q-mb-xl animate-hero-reveal" style="max-width: 95vw; margin-top: 0px;">
            <div class="text-overline text-uppercase text-weight-bold q-mb-sm text-white opacity-80 ls-2" style="font-size: 0.7rem;">Total Current Fund</div>
            <h1 class="text-h1 text-weight-bolder q-my-sm hero-balance text-gradient">
              {{ totalFundsFormatted }}
@@ -49,7 +42,7 @@
         </div>
         
         <!-- Call to Action -->
-        <div class="q-gutter-md animate-fade-up delay-100">
+        <div class="q-gutter-md animate-reveal delay-100">
           <q-btn 
             to="/payment-details"
             color="white" 
@@ -69,25 +62,9 @@
     </section>
 
     <!-- Stats Section (Floating Overlap) -->
-    <div class="container q-mx-auto q-px-md relative-position" style="margin-top: -80px; z-index: 3;">
-       <div class="row q-col-gutter-lg">
-          <div class="col-12 col-md-3 col-sm-6 animate-fade-up delay-200">
-             <q-card class="stat-card shadow-3 full-height border-radius-lg" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white border-dark-mode' : 'bg-white text-black'">
-               <q-card-section class="q-pa-lg">
-                 <div class="row items-center justify-between q-mb-md">
-                    <div class="icon-box" :class="$q.dark.isActive ? 'bg-white-10 text-blue-3' : 'bg-blue-1 text-primary'">
-                       <q-icon name="account_balance_wallet" size="sm" />
-                    </div>
-                    <!-- Sparkline placeholder or trend icon -->
-                    <q-icon name="trending_up" color="positive" />
-                 </div>
-                 <div class="text-caption text-uppercase text-weight-bold ls-1" :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-7'">Fund Balance</div>
-                 <div class="text-h5 text-weight-bolder q-mt-xs" :class="$q.dark.isActive ? 'text-blue-3' : 'text-primary'">{{ totalFundsFormatted }}</div>
-               </q-card-section>
-             </q-card>
-          </div>
-          
-          <div class="col-12 col-md-3 col-sm-6 animate-fade-up delay-300">
+    <div class="container q-mx-auto q-px-md relative-position" style="margin-top: -100px; z-index: 3;">
+        <div class="row q-col-gutter-lg justify-center">
+          <div class="col-12 col-md-4 col-sm-6 animate-reveal delay-300">
              <q-card class="stat-card shadow-3 full-height border-radius-lg" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white border-dark-mode' : 'bg-white text-black'">
                <q-card-section class="q-pa-lg">
                  <div class="row items-center justify-between q-mb-md">
@@ -101,7 +78,7 @@
              </q-card>
           </div>
 
-          <div class="col-12 col-md-3 col-sm-6 animate-fade-up delay-400">
+          <div class="col-12 col-md-4 col-sm-6 animate-reveal delay-400">
              <q-card class="stat-card shadow-3 full-height border-radius-lg" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white border-dark-mode' : 'bg-white text-black'">
                <q-card-section class="q-pa-lg">
                  <div class="row items-center justify-between q-mb-md">
@@ -115,7 +92,7 @@
              </q-card>
           </div>
 
-          <div class="col-12 col-md-3 col-sm-6 animate-fade-up delay-500">
+          <div class="col-12 col-md-4 col-sm-6 animate-reveal delay-500">
              <q-card class="stat-card shadow-3 full-height border-radius-lg" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white border-dark-mode' : 'bg-white text-black'">
                <q-card-section class="q-pa-lg">
                  <div class="row items-center justify-between q-mb-md">
@@ -148,7 +125,7 @@
 
         <div class="row q-col-gutter-lg">
           <!-- Recent Transactions Feed -->
-           <div class="col-12 col-md-5">
+           <div class="col-12 col-md-5 animate-reveal delay-400">
             <q-card class="shadow-soft full-height border-radius-lg overflow-hidden" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white border-dark-mode' : 'bg-white text-black'">
               <q-card-section class="q-pa-lg row items-center justify-between" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-grey-1 border-bottom'">
                  <div class="text-h6 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-blue-grey-9'">Recent Activity</div>
@@ -183,7 +160,7 @@
           </div>
 
           <!-- Growth Chart -->
-          <div class="col-12 col-md-4">
+          <div class="col-12 col-md-4 animate-reveal delay-500">
              <q-card class="shadow-soft full-height border-radius-lg overflow-hidden" :class="$q.dark.isActive ? 'bg-blue-grey-9 text-white border-dark-mode' : 'bg-white text-black'">
               <q-card-section class="q-pa-lg border-bottom-dark" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-grey-1 border-bottom'">
                 <div class="text-h6 text-weight-bold" :class="$q.dark.isActive ? 'text-white' : 'text-blue-grey-9'">Fund Growth</div>
@@ -197,7 +174,7 @@
           </div>
           
            <!-- Tools / Quick Links -->
-          <div class="col-12 col-md-3">
+          <div class="col-12 col-md-3 animate-reveal delay-500">
              <q-card class="bg-gradient-primary text-white full-height shadow-lg border-radius-lg overflow-hidden relative-position">
                <!-- Decorative Circles -->
                <div class="absolute-top-right bg-white-10 rounded-full" style="width: 150px; height: 150px; top: -50px; right: -50px;"></div>
@@ -296,9 +273,71 @@
 
 /* Hero Section */
 .hero-section {
-  height: 90vh; /* Taller hero */
+  height: 65vh; /* Further reduced to fit cards on desktop */
   width: 100%;
 }
+
+/* Modern Animations - Optimized for Mobile */
+.animate-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: revealFast 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes revealFast {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Reveal for Hero Card */
+.animate-hero-reveal {
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+  animation: revealHero 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes revealHero {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Moving Mesh Gradient for Hero */
+.bg-mesh {
+  background-color: #111827;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+  background-size: 200% 200%;
+  animation: meshGradient 15s ease infinite;
+}
+
+@keyframes meshGradient {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Refined Stat Cards */
+.stat-card {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.stat-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+  border-color: rgba(79, 70, 229, 0.4);
+}
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+
 
 .bg-gradient-overlay {
   background: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(79, 70, 229, 0.8) 100%);
@@ -336,10 +375,10 @@
 }
 @media (max-width: 600px) {
   .hero-balance {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
   }
   .hero-section {
-    height: 100vh;
+    height: 80vh; /* Better for mobile toolbars */
   }
 }
 
@@ -459,14 +498,21 @@ const sheetCollected = computed(() => {
   return sum
 })
 
-const totalCollected = computed(() => sheetCollected.value + transactionStore.specialIncome)
-const totalSpent = computed(() => transactionStore.specialExpenses)
-const totalFunds = computed(() => totalCollected.value - totalSpent.value)
+const totalFunds = computed(() => transactionStore.totalFunds)
 
-// Formatters
-const totalFundsFormatted = computed(() => 'LKR ' + totalFunds.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
-const totalCollectedFormatted = computed(() => 'LKR ' + totalCollected.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
-const totalSpentFormatted = computed(() => 'LKR ' + totalSpent.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+// Formatters with null-safety
+const totalFundsFormatted = computed(() => {
+  const val = totalFunds.value || 0
+  return 'LKR ' + val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+})
+const totalCollectedFormatted = computed(() => {
+  const val = (sheetCollected.value + transactionStore.specialIncome) || 0
+  return 'LKR ' + val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+})
+const totalSpentFormatted = computed(() => {
+  const val = transactionStore.specialExpenses || 0
+  return 'LKR ' + val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+})
 
 // Participation Stats
 const totalStudentsCount = computed(() => students.value.length || 0)
@@ -502,11 +548,11 @@ const chartData = computed(() => {
      
      const targetMonth = String(index + 1).padStart(2, '0')
      const specialCredits = transactionStore.transactions
-       .filter(t => t.date.substring(5, 7) === targetMonth && t.type === 'Credit')
+       .filter(t => t.date && t.date.length >= 7 && t.date.substring(5, 7) === targetMonth && t.type === 'Credit')
        .reduce((s, t) => s + parseFloat(t.amount || 0), 0)
        
      const specialDebits = transactionStore.transactions
-       .filter(t => t.date.substring(5, 7) === targetMonth && t.type === 'Debit')
+       .filter(t => t.date && t.date.length >= 7 && t.date.substring(5, 7) === targetMonth && t.type === 'Debit')
        .reduce((s, t) => s + parseFloat(t.amount || 0), 0)
        
      currentBalance += (aggAmount + specialCredits - specialDebits)

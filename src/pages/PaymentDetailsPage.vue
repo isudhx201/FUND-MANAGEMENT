@@ -43,7 +43,7 @@
         <!-- Modern Search Bar -->
         <q-card-section class="q-pa-md border-bottom" :class="$q.dark.isActive ? 'bg-blue-grey-10 border-bottom-dark' : 'bg-grey-1'">
           <div class="row justify-between items-center q-gutter-y-sm">
-             <div class="text-h6 text-weight-bold col-12 col-sm-auto">Batch 2026 List</div>
+
              <q-input 
                 v-model="filter" 
                 outlined 

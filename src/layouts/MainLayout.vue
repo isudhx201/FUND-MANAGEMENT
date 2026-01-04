@@ -116,6 +116,20 @@
               <q-item-label class="text-weight-medium">Documents</q-item-label>
             </q-item-section>
           </q-item>
+
+          <q-separator :color="$q.dark.isActive ? 'grey-8' : 'grey-3'" class="q-mx-md q-my-sm" />
+
+          <!-- Mobile Theme Toggle -->
+          <q-item clickable v-ripple @click="toggleTheme" class="rounded-borders q-mx-md q-mb-sm">
+            <q-item-section avatar>
+              <q-icon :name="$q.dark.isActive ? 'light_mode' : 'dark_mode'" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-weight-medium">
+                {{ $q.dark.isActive ? 'Light Mode' : 'Dark Mode' }}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
         </q-list>
 
         <q-space />
