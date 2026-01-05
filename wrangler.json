@@ -5,5 +5,5 @@
     "directory": "./dist/spa",
     "binding": "ASSETS"
   },
-  "main": "src/worker-script.js"
+  "main": "dist/spa/_worker.js"
 }
