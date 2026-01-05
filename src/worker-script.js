@@ -1,16 +1,19 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    
-    // Attempt to fetch the asset from the local assets directory
+    const path = url.pathname;
+
+    // 1. Try to fetch the exact asset
     let response = await env.ASSETS.fetch(request);
+
+    // 2. If it's a 404 and it's not a static file (doesn't have an extension like .js, .css, .png)
+    // then serve index.html for SPA routing.
+    const isStaticAsset = path.includes('.') && !path.endsWith('.html');
     
-    // If the asset isn't found (404) and the path doesn't look like a file (no dots),
-    // we serve index.html to support SPA routing (like /login).
-    if (response.status === 404 && !url.pathname.includes('.')) {
+    if (response.status === 404 && !isStaticAsset) {
       return env.ASSETS.fetch(new URL('/index.html', url.origin));
     }
-    
+
     return response;
   },
 };
