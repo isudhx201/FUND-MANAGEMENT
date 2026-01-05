@@ -150,6 +150,28 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <q-footer 
+       :class="$q.dark.isActive ? 'bg-blue-grey-10 text-grey-6 border-top-dark' : 'bg-grey-1 text-grey-7 border-top-light'" 
+       class="q-py-sm"
+    >
+      <div class="container q-mx-auto row items-center justify-between q-px-lg">
+        <div class="text-caption opacity-70">
+          © 2026 FBS 2023 Batch | University of Vavuniya
+        </div>
+        <div>
+          <q-btn 
+            flat 
+            no-caps 
+            dense 
+            label="Batch Fund Agreement & Policy" 
+            size="sm" 
+            class="policy-link"
+            to="/agreement"
+          />
+        </div>
+      </div>
+    </q-footer>
   </q-layout>
 </template>
 
@@ -249,5 +271,28 @@ function toggleTheme() {
   background: rgba(99, 102, 241, 0.15);
   color: #818cf8;
   font-weight: 600;
+}
+
+.border-top-dark {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.border-top-light {
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.policy-link {
+  transition: all 0.2s ease;
+  opacity: 0.8;
+}
+
+.policy-link:hover {
+  opacity: 1;
+  color: #818cf8;
+  text-decoration: underline;
+}
+
+.container {
+  max-width: 1400px;
 }
 </style>

@@ -498,26 +498,66 @@ async function saveSettings() {
     return
   }
 
-  if (settingsForm.newEmail || settingsForm.newPassword) {
-    if (settingsForm.newPassword && settingsForm.newPassword !== settingsForm.confirmPassword) {
-      $q.notify({ type: 'negative', message: 'New passwords do not match!' })
+  const currentEmail = userStore.userEmail
+  const enteredEmail = settingsForm.newEmail
+
+  if (!enteredEmail) {
+    $q.notify({ type: 'warning', message: 'Email field cannot be empty' })
+    return
+  }
+
+  // Case 1: Change password of current account (Email is same)
+  if (enteredEmail === currentEmail) {
+    if (!settingsForm.newPassword) {
+      $q.notify({ type: 'warning', message: 'Please enter a new password to change it' })
+      return
+    }
+    
+    if (settingsForm.newPassword !== settingsForm.confirmPassword) {
+      $q.notify({ type: 'negative', message: 'Passwords do not match!' })
       return
     }
 
     const result = await userStore.updateCredentials(
-      null, // currentPassword bypass for now as we don't always need it for email change
-      settingsForm.newEmail, 
+      settingsForm.currentPassword,
+      enteredEmail,
       settingsForm.newPassword
     )
     
     if (result.success) {
-      $q.notify({ type: 'positive', message: 'Credentials updated successfully!' })
+      $q.notify({ type: 'positive', message: 'Password updated successfully!' })
       settingsDialog.value = false
     } else {
-      $q.notify({ type: 'negative', message: result.error || 'Failed to update credentials' })
+      $q.notify({ type: 'negative', message: result.error || 'Failed to update password' })
     }
-  } else {
-    $q.notify({ type: 'warning', message: 'Fields cannot be empty' })
+  } 
+  // Case 2: Create a NEW user account (Email is different)
+  else {
+    if (!settingsForm.newPassword) {
+      $q.notify({ type: 'warning', message: 'Password is required to create a new admin account' })
+      return
+    }
+    
+    if (settingsForm.newPassword !== settingsForm.confirmPassword) {
+      $q.notify({ type: 'negative', message: 'Passwords do not match!' })
+      return
+    }
+
+    const result = await userStore.registerAdmin(enteredEmail, settingsForm.newPassword)
+    
+    if (result.success) {
+      $q.notify({ 
+        type: 'positive', 
+        message: 'New admin account created! You can now share these credentials.' 
+      })
+      // Reset form and close
+      settingsDialog.value = false
+      
+      // Optional: If you want the admin to remain logged in as themselves, 
+      // be aware that signUp might have changed the session.
+    } else {
+      $q.notify({ type: 'negative', message: result.error || 'Failed to create new account' })
+    }
   }
 }
 

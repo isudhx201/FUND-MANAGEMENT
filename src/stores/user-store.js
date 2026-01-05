@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import { supabase } from 'src/supabase'
+import { supabase, supabaseUrl, supabaseKey } from 'src/supabase'
+import { createClient } from '@supabase/supabase-js'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -99,7 +100,18 @@ export const useUserStore = defineStore('user', {
     },
 
     async updateCredentials(currentPassword, newEmail, newPassword) {
-      // Update currently logged in Supabase user (Standard Admin)
+      // 1. Optional: Verify current password first if provided
+      if (currentPassword) {
+        const { error: loginError } = await supabase.auth.signInWithPassword({
+          email: this.userEmail,
+          password: currentPassword
+        })
+        if (loginError) {
+          return { success: false, error: 'Current password incorrect' }
+        }
+      }
+
+      // 2. Update currently logged in Supabase user
       const updates = {}
       if (newEmail) updates.email = newEmail
       if (newPassword) updates.password = newPassword
@@ -116,7 +128,16 @@ export const useUserStore = defineStore('user', {
     },
 
     async registerAdmin(email, password) {
-      const { data, error } = await supabase.auth.signUp({
+      // Create a temporary client that doesn't persist session to avoid logging out the current user
+      const tempSupabase = createClient(supabaseUrl, supabaseKey, {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+          detectSessionInUrl: false
+        }
+      })
+
+      const { data, error } = await tempSupabase.auth.signUp({
         email,
         password,
       })

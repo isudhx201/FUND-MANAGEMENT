@@ -11,6 +11,7 @@ const routes = [
       { path: 'admin/dashboard', component: () => import('pages/AdminDashboardPage.vue'), meta: { requiresAuth: true } },
       { path: 'payment-details', component: () => import('pages/PaymentDetailsPage.vue') },
       { path: 'history', component: () => import('pages/MainFundHistoryPage.vue') },
+      { path: 'agreement', component: () => import('pages/AgreementPage.vue') },
     ],
   },
 
